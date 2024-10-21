@@ -12,22 +12,18 @@ import FormControl from "@mui/material/FormControl";
 import { TextField } from "@mui/material";
 
 const VideoQuestion = ({ question }) => {
-  const [options, setOptions] = React.useState([]);
-  const [hasOptions, setHasOptions] = React.useState(false);
-
   function renderOptions() {
     // Fetch the options from the question object
     const optionsArray = question.options.options;
-    setOptions(optionsArray);
 
     var html = [];
 
-    for (let i = 0; i < options.length; i++) {
+    for (let i = 0; i < optionsArray.length; i++) {
       html.push(
         <FormControlLabel
-          value={options[i]}
+          value={optionsArray[i]}
           control={<Radio />}
-          label={options[i]}
+          label={optionsArray[i]}
         />
       );
     }
@@ -48,7 +44,6 @@ const VideoQuestion = ({ question }) => {
         />
       );
     } else {
-      setHasOptions(true);
       return (
         <FormControl style={{ marginTop: 50 }}>
           <RadioGroup

@@ -30,7 +30,7 @@ app.get("/api/questions/:id", async (req, res) => {
 
 // Add a new question to the database
 app.post("/api/questions", async (req, res) => {
-  const {
+  var {
     question_text,
     question_type,
     options,
@@ -38,7 +38,20 @@ app.post("/api/questions", async (req, res) => {
     next_question_no,
     video_url,
     video_title,
+    video_file,
   } = req.body;
+
+  if (options === "") {
+    options = null;
+  }
+
+  if (next_question_yes === "") {
+    next_question_yes = null;
+  }
+
+  if (next_question_no === "") {
+    next_question_no = null;
+  }
 
   try {
     await db.query(
@@ -53,6 +66,15 @@ app.post("/api/questions", async (req, res) => {
         video_title,
       ]
     );
+    // Save the video file to the server
+    if (video_file) {
+      const path = `./public/resources/${video_file.name}`;
+      video_file.mv(path, (error) => {
+        if (error) {
+          console.error(error);
+        }
+      });
+    }
     res.json({ message: "Question added successfully" });
   } catch (error) {
     res.status(500).json({ error: "Error adding question" });

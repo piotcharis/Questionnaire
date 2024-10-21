@@ -7,6 +7,22 @@ import {
   Box,
   MenuItem,
 } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { styled } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const Admin = () => {
   const [questionText, setQuestionText] = useState("");
@@ -14,23 +30,31 @@ const Admin = () => {
   const [options, setOptions] = useState("");
   const [nextQuestionYes, setNextQuestionYes] = useState("");
   const [nextQuestionNo, setNextQuestionNo] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
-  const [error, setError] = useState("");
+  const [videoFile, setVideoFile] = useState(null);
+  const [errorText, setErrorText] = useState("");
+  const [errorOptions, setErrorOptions] = useState("");
+  const [errorVideoTitle, setErrorVideoTitle] = useState("");
+  const [errorVideoFile, setErrorVideoFile] = useState("");
 
   const handleAddQuestion = async () => {
     if (!questionText) {
-      setError("Question text cannot be empty");
+      setErrorText("Question text cannot be empty");
       return;
     }
 
     if (questionType === "multiple_choice" && !options) {
-      setError("Options cannot be empty for multiple choice questions");
+      setErrorOptions("Options cannot be empty for multiple choice questions");
       return;
     }
 
-    if (questionType === "video" && (!videoUrl || !videoTitle)) {
-      setError("Video URL and Video Title cannot be empty for video questions");
+    if (questionType === "video" && !videoTitle) {
+      setErrorVideoTitle("Video Title cannot be empty for video questions");
+      return;
+    }
+
+    if (questionType === "video" && !videoFile) {
+      setErrorVideoFile("Video file cannot be empty for video questions");
       return;
     }
 
@@ -42,12 +66,12 @@ const Admin = () => {
       setOptions(null);
     }
 
-    if (videoUrl === "") {
-      setVideoUrl(null);
-    }
-
     if (videoTitle === "") {
       setVideoTitle(null);
+    }
+
+    if (videoFile === "") {
+      setVideoFile(null);
     }
 
     if (nextQuestionYes === "") {
@@ -56,6 +80,13 @@ const Admin = () => {
 
     if (nextQuestionNo === "") {
       setNextQuestionNo(null);
+    }
+
+    // Video file needs to be sent as FormData
+    // TODO: Fix video file upload
+    const formData = new FormData();
+    if (videoFile) {
+      formData.append("videoFile", videoFile);
     }
 
     try {
@@ -70,8 +101,9 @@ const Admin = () => {
           options: options,
           next_question_yes: nextQuestionYes,
           next_question_no: nextQuestionNo,
-          video_url: videoUrl,
+          video_url: videoFile ? videoFile.name : null,
           video_title: videoTitle,
+          videoFile: formData,
         }),
       });
 
@@ -84,12 +116,16 @@ const Admin = () => {
       setOptions("");
       setNextQuestionYes("");
       setNextQuestionNo("");
-      setVideoUrl("");
       setVideoTitle("");
-      setError("");
+      setVideoFile(null);
+      setErrorText("");
+      setErrorOptions("");
+      setErrorVideoTitle("");
+      setErrorVideoFile("");
       alert("Question added successfully");
     } catch (err) {
-      setError(err.message);
+      console.error("Error adding question:", err);
+      alert("Failed to add question");
     }
   };
 
@@ -105,8 +141,8 @@ const Admin = () => {
           fullWidth
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
-          error={!!error}
-          helperText={error}
+          error={!!errorText}
+          helperText={errorText}
           required
         />
         <TextField
@@ -130,6 +166,8 @@ const Admin = () => {
             value={options}
             onChange={(e) => setOptions(e.target.value)}
             margin="normal"
+            error={!!errorOptions}
+            helperText={errorOptions}
             required
           />
         )}
@@ -162,15 +200,6 @@ const Admin = () => {
         {questionType === "video" && (
           <>
             <TextField
-              label="Video Name"
-              variant="outlined"
-              fullWidth
-              value={videoUrl}
-              onChange={(e) => setVideoUrl(e.target.value)}
-              margin="normal"
-              required
-            />
-            <TextField
               label="Video Title"
               variant="outlined"
               fullWidth
@@ -178,6 +207,35 @@ const Admin = () => {
               onChange={(e) => setVideoTitle(e.target.value)}
               margin="normal"
               required
+              error={!!errorVideoTitle}
+              helperText={errorVideoTitle}
+            />
+            <TextField
+              label="Video File"
+              variant="outlined"
+              fullWidth
+              value={videoFile ? videoFile.name : ""}
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    color="primary"
+                    component="label"
+                    htmlFor="video-file"
+                  >
+                    <FileUploadIcon />
+                    <VisuallyHiddenInput
+                      id="video-file"
+                      type="file"
+                      onChange={(e) => setVideoFile(e.target.files[0])}
+                    />
+                  </IconButton>
+                ),
+              }}
+              margin="normal"
+              required
+              error={!!errorVideoFile}
+              helperText={errorVideoFile}
+              disabled
             />
           </>
         )}
@@ -186,6 +244,7 @@ const Admin = () => {
             variant="contained"
             color="primary"
             onClick={handleAddQuestion}
+            style={{ backgroundColor: "#4CAF50" }}
           >
             Add Question
           </Button>

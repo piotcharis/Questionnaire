@@ -267,7 +267,14 @@ const Admin = () => {
   const renderTable = hasQuestions ? (
     <QuestionsTable questions={questions} columns={questionColumns} />
   ) : (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <CircularProgress />
     </Box>
   );

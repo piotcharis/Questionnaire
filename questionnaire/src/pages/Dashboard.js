@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography } from "@mui/material";
+import { CircularProgress, Paper, Typography, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
@@ -33,6 +33,7 @@ const chartSetting = {
 const Dashboard = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -51,6 +52,7 @@ const Dashboard = () => {
       try {
         const response = await axios.get(REACT_APP_API_LINK + "/answers");
         setAnswers(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching the answers:", error);
       }
@@ -113,8 +115,6 @@ const Dashboard = () => {
       const dataset = prepareData(question);
       const options = getOptions(question);
 
-      console.log(dataset);
-
       return (
         <Grid size={6}>
           <BarChart
@@ -127,6 +127,21 @@ const Dashboard = () => {
       );
     });
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          height: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <div

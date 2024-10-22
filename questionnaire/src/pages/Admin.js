@@ -12,6 +12,7 @@ import {
   AppBar,
   Toolbar,
   Slide,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -19,7 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axios from "axios";
 
-// import QuestionsTable from "../components/QuestionsTable";
+import QuestionsTable from "../components/QuestionsTable";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -59,20 +60,30 @@ const Admin = () => {
 
   const [questions, setQuestions] = useState([]);
   const [questionColumns, setQuestionColumns] = useState([]);
+  const [hasQuestions, setHasQuestions] = useState(false);
 
   useEffect(() => {
     getQuestions();
-
-    // Get the columns of the questions table from the questions json
-    if (questions.length > 0) {
-      setQuestionColumns(Object.keys(questions[0]));
-    }
   }, []);
 
   const getQuestions = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/questions");
+
+      // Turn the options json to a string
+      response.data.forEach((question) => {
+        if (question.options) {
+          question.options = JSON.stringify(question.options);
+        }
+      });
+
       setQuestions(response.data);
+
+      // Get the columns of the questions table from the questions json
+      if (response.data.length > 0) {
+        setQuestionColumns(Object.keys(response.data[0]));
+        setHasQuestions(true);
+      }
     } catch (err) {
       console.error("Error fetching questions:", err);
       setAlertError(true);
@@ -81,6 +92,17 @@ const Admin = () => {
   };
 
   const handleAddQuestion = async () => {
+    // Check if the question exists already
+    const questionExists = questions.find(
+      (question) => question.question_text === questionText
+    );
+
+    if (questionExists) {
+      setAlertError(true);
+      setAlertMessage("Question already exists");
+      return;
+    }
+
     if (!questionText) {
       setErrorText("Question text cannot be empty");
       return;
@@ -205,13 +227,23 @@ const Admin = () => {
     setAlertMessage("");
   };
 
-  const handleOpenDialog = () => {
+  const handleOpenDialog = async () => {
+    await getQuestions();
+
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
+
+  const renderTable = hasQuestions ? (
+    <QuestionsTable questions={questions} columns={questionColumns} />
+  ) : (
+    <Box sx={{ display: "flex" }}>
+      <CircularProgress />
+    </Box>
+  );
 
   return (
     <Container maxWidth="sm">
@@ -404,7 +436,7 @@ const Admin = () => {
                 </Typography>
               </Toolbar>
             </AppBar>
-            <QuestionsTable rows={questions} columns={questionColumns} />
+            {renderTable}
           </Dialog>
         </Box>
       </Box>

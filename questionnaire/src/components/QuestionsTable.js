@@ -1,43 +1,28 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  Paper,
+  Checkbox,
+  IconButton,
+  Tooltip,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 
 function EnhancedTableHead(props) {
   const {
@@ -59,6 +44,7 @@ function EnhancedTableHead(props) {
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
+            padding="checkbox"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
@@ -70,7 +56,8 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell}
-            align={parseInt(headCell) !== NaN ? "right" : "left"}
+            padding={"normal"}
+            align={"left"}
             sortDirection={orderBy === headCell ? order : false}
           >
             <TableSortLabel
@@ -78,7 +65,7 @@ function EnhancedTableHead(props) {
               direction={orderBy === headCell ? order : "asc"}
               onClick={createSortHandler(headCell)}
             >
-              {headCell.label}
+              {headCell}
               {orderBy === headCell ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -129,14 +116,7 @@ function EnhancedTableToolbar(props) {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
+        <></>
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
@@ -145,11 +125,7 @@ function EnhancedTableToolbar(props) {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <></>
       )}
     </Toolbar>
   );
@@ -159,13 +135,25 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-function QuestionsTable({ columns, rows }) {
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+const QuestionsTable = ({ questions, columns }) => {
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("calories");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [rows, setRows] = useState(questions);
+  const [visibleRows, setVisibleRows] = useState([]);
+
+  const [deleteAlertSuccess, setDeleteAlertSuccess] = useState(false);
+  const [deleteAlertError, setDeleteAlertError] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
+
+  useEffect(() => {
+    setVisibleRows(
+      rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    );
+  }, [rows, page, rowsPerPage]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -210,35 +198,68 @@ function QuestionsTable({ columns, rows }) {
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
   const handleDelete = async () => {
     try {
       const response = await axios.post("http://localhost:3000/api/delete", {
         selected,
       });
       console.log(response);
+      setRows(rows.filter((row) => !selected.includes(row.id)));
+      setSelected([]);
+      setDeleteAlertSuccess(true);
+      setDeleteMessage("Question(s) deleted successfully");
     } catch (error) {
       console.error("Error deleting the question:", error);
+      setDeleteAlertError(true);
+      setDeleteMessage("Failed to delete question(s)");
     }
+  };
+
+  const handleClose = () => {
+    setDeleteAlertSuccess(false);
+    setDeleteAlertError(false);
+    setDeleteMessage("");
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () =>
-      [...rows]
-        .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
-  );
-
   return (
     <Box sx={{ width: "100%" }}>
+      {deleteAlertSuccess && (
+        <Snackbar
+          open={deleteAlertSuccess}
+          autoHideDuration={2000}
+          onClose={handleClose}
+        >
+          <Alert
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {deleteMessage}
+          </Alert>
+        </Snackbar>
+      )}
+      {deleteAlertError && !deleteAlertSuccess && (
+        <Snackbar
+          open={deleteAlertError}
+          autoHideDuration={2000}
+          onClose={handleClose}
+        >
+          <Alert
+            severity="error"
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {deleteMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
@@ -248,7 +269,7 @@ function QuestionsTable({ columns, rows }) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size={"medium"}
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -288,23 +309,24 @@ function QuestionsTable({ columns, rows }) {
                       component="th"
                       id={labelId}
                       scope="row"
-                      padding="none"
+                      align="left"
                     >
-                      {row.question_text}
+                      {row.id}
                     </TableCell>
-                    <TableCell align="right">{row.question_type}</TableCell>
-                    <TableCell align="right">{row.options}</TableCell>
-                    <TableCell align="right">{row.video_title}</TableCell>
-                    <TableCell align="right">{row.video_url}</TableCell>
-                    <TableCell align="right">{row.next_question_no}</TableCell>
-                    <TableCell align="right">{row.next_question_yes}</TableCell>
+                    <TableCell align="left">{row.question_text}</TableCell>
+                    <TableCell align="left">{row.question_type}</TableCell>
+                    <TableCell align="left">{row.options}</TableCell>
+                    <TableCell align="left">{row.next_question_yes}</TableCell>
+                    <TableCell align="left">{row.next_question_no}</TableCell>
+                    <TableCell align="left">{row.video_title}</TableCell>
+                    <TableCell align="left">{row.video_url}</TableCell>
                   </TableRow>
                 );
               })}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: 53 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -323,12 +345,8 @@ function QuestionsTable({ columns, rows }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
   );
-}
+};
 
 export default QuestionsTable;

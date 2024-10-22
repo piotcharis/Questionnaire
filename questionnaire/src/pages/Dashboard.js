@@ -134,7 +134,7 @@ const Dashboard = () => {
         fontWeight: "400",
       }}
     >
-      <Navbar />
+      <Navbar page={"dashboard"} />
       <Typography variant="h4" gutterBottom style={{ padding: 20 }}>
         Dashboard
       </Typography>

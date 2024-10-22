@@ -21,6 +21,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import axios from "axios";
 
 import QuestionsTable from "../components/QuestionsTable";
+import Navbar from "../components/Navbar";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -250,201 +251,204 @@ const Admin = () => {
   );
 
   return (
-    <Container maxWidth="sm">
-      {alertError && (
-        <Snackbar
-          autoHideDuration={2000}
-          open={alertError}
-          onClose={handleClose}
-        >
-          <Alert
-            severity="error"
-            variant="filled"
-            sx={{ width: "100%" }}
+    <>
+      <Navbar page={"admin"} />
+      <Container maxWidth="sm">
+        {alertError && (
+          <Snackbar
+            autoHideDuration={2000}
+            open={alertError}
             onClose={handleClose}
           >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
-      )}
+            <Alert
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+              onClose={handleClose}
+            >
+              {alertMessage}
+            </Alert>
+          </Snackbar>
+        )}
 
-      {alertSuccess && !alertError && (
-        <Snackbar
-          autoHideDuration={2000}
-          open={alertSuccess}
-          onClose={handleClose}
-        >
-          <Alert
-            severity="success"
-            variant="filled"
-            sx={{ width: "100%" }}
+        {alertSuccess && !alertError && (
+          <Snackbar
+            autoHideDuration={2000}
+            open={alertSuccess}
             onClose={handleClose}
           >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
-      )}
+            <Alert
+              severity="success"
+              variant="filled"
+              sx={{ width: "100%" }}
+              onClose={handleClose}
+            >
+              {alertMessage}
+            </Alert>
+          </Snackbar>
+        )}
 
-      <Box mt={5}>
-        <Typography variant="h4" gutterBottom>
-          Admin Page
-        </Typography>
-        <TextField
-          label="Question Text"
-          variant="outlined"
-          fullWidth
-          value={questionText}
-          onChange={(e) => setQuestionText(e.target.value)}
-          error={!!errorText}
-          helperText={errorText}
-          required
-        />
-        <TextField
-          label="Question Type"
-          variant="outlined"
-          fullWidth
-          select
-          value={questionType}
-          onChange={(e) => setQuestionType(e.target.value)}
-          margin="normal"
-        >
-          <MenuItem value="text">Text</MenuItem>
-          <MenuItem value="video">Video</MenuItem>
-          <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
-        </TextField>
-        {questionType === "multiple_choice" && (
+        <Box mt={5}>
+          <Typography variant="h4" gutterBottom>
+            Admin Page
+          </Typography>
           <TextField
-            label="Options (separated by commas)"
+            label="Question Text"
             variant="outlined"
             fullWidth
-            value={options}
-            onChange={(e) => setOptions(e.target.value)}
-            margin="normal"
-            error={!!errorOptions}
-            helperText={errorOptions}
+            value={questionText}
+            onChange={(e) => setQuestionText(e.target.value)}
+            error={!!errorText}
+            helperText={errorText}
             required
           />
-        )}
-        {questionType === "video" && (
           <TextField
-            label="Options (separated by commas)"
+            label="Question Type"
             variant="outlined"
             fullWidth
-            value={options}
-            onChange={(e) => setOptions(e.target.value)}
+            select
+            value={questionType}
+            onChange={(e) => setQuestionType(e.target.value)}
+            margin="normal"
+          >
+            <MenuItem value="text">Text</MenuItem>
+            <MenuItem value="video">Video</MenuItem>
+            <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
+          </TextField>
+          {questionType === "multiple_choice" && (
+            <TextField
+              label="Options (separated by commas)"
+              variant="outlined"
+              fullWidth
+              value={options}
+              onChange={(e) => setOptions(e.target.value)}
+              margin="normal"
+              error={!!errorOptions}
+              helperText={errorOptions}
+              required
+            />
+          )}
+          {questionType === "video" && (
+            <TextField
+              label="Options (separated by commas)"
+              variant="outlined"
+              fullWidth
+              value={options}
+              onChange={(e) => setOptions(e.target.value)}
+              margin="normal"
+            />
+          )}
+          <TextField
+            label="Next Question for Yes"
+            variant="outlined"
+            fullWidth
+            value={nextQuestionYes}
+            onChange={(e) => setNextQuestionYes(e.target.value)}
             margin="normal"
           />
-        )}
-        <TextField
-          label="Next Question for Yes"
-          variant="outlined"
-          fullWidth
-          value={nextQuestionYes}
-          onChange={(e) => setNextQuestionYes(e.target.value)}
-          margin="normal"
-        />
-        <TextField
-          label="Next Question for No"
-          variant="outlined"
-          fullWidth
-          value={nextQuestionNo}
-          onChange={(e) => setNextQuestionNo(e.target.value)}
-          margin="normal"
-        />
-        {questionType === "video" && (
-          <>
-            <TextField
-              label="Video Title"
-              variant="outlined"
-              fullWidth
-              value={videoTitle}
-              onChange={(e) => setVideoTitle(e.target.value)}
-              margin="normal"
-              required
-              error={!!errorVideoTitle}
-              helperText={errorVideoTitle}
-            />
-            <TextField
-              label="Video File"
-              variant="outlined"
-              fullWidth
-              value={videoFile ? videoFile.name : ""}
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    color="primary"
-                    component="label"
-                    htmlFor="video-file"
-                  >
-                    <FileUploadIcon />
-                    <VisuallyHiddenInput
-                      id="video-file"
-                      type="file"
-                      onChange={(e) => setVideoFile(e.target.files[0])}
-                    />
-                  </IconButton>
-                ),
-              }}
-              margin="normal"
-              required
-              error={!!errorVideoFile}
-              helperText={errorVideoFile}
-              disabled
-            />
-          </>
-        )}
-        <Box
-          mt={2}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddQuestion}
-            style={{ backgroundColor: "#4CAF50" }}
+          <TextField
+            label="Next Question for No"
+            variant="outlined"
+            fullWidth
+            value={nextQuestionNo}
+            onChange={(e) => setNextQuestionNo(e.target.value)}
+            margin="normal"
+          />
+          {questionType === "video" && (
+            <>
+              <TextField
+                label="Video Title"
+                variant="outlined"
+                fullWidth
+                value={videoTitle}
+                onChange={(e) => setVideoTitle(e.target.value)}
+                margin="normal"
+                required
+                error={!!errorVideoTitle}
+                helperText={errorVideoTitle}
+              />
+              <TextField
+                label="Video File"
+                variant="outlined"
+                fullWidth
+                value={videoFile ? videoFile.name : ""}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      color="primary"
+                      component="label"
+                      htmlFor="video-file"
+                    >
+                      <FileUploadIcon />
+                      <VisuallyHiddenInput
+                        id="video-file"
+                        type="file"
+                        onChange={(e) => setVideoFile(e.target.files[0])}
+                      />
+                    </IconButton>
+                  ),
+                }}
+                margin="normal"
+                required
+                error={!!errorVideoFile}
+                helperText={errorVideoFile}
+                disabled
+              />
+            </>
+          )}
+          <Box
+            mt={2}
+            style={{ display: "flex", justifyContent: "space-between" }}
           >
-            Add Question
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddQuestion}
+              style={{ backgroundColor: "#4CAF50" }}
+            >
+              Add Question
+            </Button>
 
-          {/* Button to show all questions */}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialog}
-            style={{ marginLeft: 50 }}
-          >
-            Show Questions
-          </Button>
-          <Dialog
-            fullScreen
-            open={openDialog}
-            onClose={handleCloseDialog}
-            TransitionComponent={Transition}
-          >
-            <AppBar sx={{ position: "relative" }}>
-              <Toolbar>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  onClick={handleCloseDialog}
-                  aria-label="close"
-                >
-                  <CloseIcon />
-                </IconButton>
-                <Typography
-                  sx={{ ml: 2, flex: 1 }}
-                  variant="h6"
-                  component="div"
-                >
-                  Questions
-                </Typography>
-              </Toolbar>
-            </AppBar>
-            {renderTable}
-          </Dialog>
+            {/* Button to show all questions */}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenDialog}
+              style={{ marginLeft: 50 }}
+            >
+              Show Questions
+            </Button>
+            <Dialog
+              fullScreen
+              open={openDialog}
+              onClose={handleCloseDialog}
+              TransitionComponent={Transition}
+            >
+              <AppBar sx={{ position: "relative" }}>
+                <Toolbar>
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    onClick={handleCloseDialog}
+                    aria-label="close"
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                  <Typography
+                    sx={{ ml: 2, flex: 1 }}
+                    variant="h6"
+                    component="div"
+                  >
+                    Questions
+                  </Typography>
+                </Toolbar>
+              </AppBar>
+              {renderTable}
+            </Dialog>
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </>
   );
 };
 

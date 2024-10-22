@@ -22,6 +22,7 @@ import axios from "axios";
 
 import QuestionsTable from "../components/QuestionsTable";
 import Navbar from "../components/Navbar";
+import PasswordSplashScreen from "../components/Password";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -56,6 +57,7 @@ const Admin = () => {
   const [alertError, setAlertError] = useState(false);
   const [alertSuccess, setAlertSuccess] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
 
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -63,9 +65,29 @@ const Admin = () => {
   const [questionColumns, setQuestionColumns] = useState([]);
   const [hasQuestions, setHasQuestions] = useState(false);
 
+  const [passwordEntered, setPasswordEntered] = useState(false);
+
   useEffect(() => {
     getQuestions();
   }, []);
+
+  const onPasswordSubmit = (password) => {
+    // Send the password to the server to check if it is correct
+    axios
+      .post("http://localhost:3000/api/password", {
+        password: password,
+      })
+      .then((response) => {
+        setPasswordEntered(true);
+        setPasswordError(false);
+      })
+      .catch((error) => {
+        console.error("Error checking password:", error);
+        setAlertError(true);
+        setAlertMessage("Incorrect password");
+        setPasswordError(true);
+      });
+  };
 
   const getQuestions = async () => {
     try {
@@ -250,7 +272,25 @@ const Admin = () => {
     </Box>
   );
 
-  return (
+  return !passwordEntered ? (
+    <>
+      <PasswordSplashScreen onPasswordSubmit={onPasswordSubmit} />
+      <Snackbar
+        autoHideDuration={2000}
+        open={passwordError}
+        onClose={handleClose}
+      >
+        <Alert
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+          onClose={handleClose}
+        >
+          Incorrect password
+        </Alert>
+      </Snackbar>
+    </>
+  ) : (
     <>
       <Navbar page={"admin"} />
       <Container maxWidth="sm">

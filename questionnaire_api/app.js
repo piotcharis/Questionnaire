@@ -5,6 +5,10 @@ const path = require("path"); // Import the path package
 
 const cors = require("cors"); // Import the cors package
 
+require("dotenv").config();
+
+const env = process.env;
+
 const app = express();
 app.use(express.json());
 
@@ -208,6 +212,16 @@ app.get("/api/answers", async (req, res) => {
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: "Error fetching answers" });
+  }
+});
+
+// Check the password
+app.post("/api/password", async (req, res) => {
+  const { password } = req.body;
+  if (password === env.ADMIN_PASSWORD) {
+    res.json({ message: "Password correct" });
+  } else {
+    res.status(401).json({ error: "Incorrect password" });
   }
 });
 

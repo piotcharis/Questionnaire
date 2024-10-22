@@ -15,7 +15,7 @@ function Navbar(props) {
           </Typography>
           {props.page === "dashboard" && (
             <Button color="inherit" href="/admin">
-              Add Question
+              Add/View Question
             </Button>
           )}
           {props.page === "admin" && (

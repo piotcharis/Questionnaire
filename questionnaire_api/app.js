@@ -1,5 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2/promise"); // For Promises support
+const multer = require("multer"); // Import the multer package
+const path = require("path"); // Import the path package
 
 const cors = require("cors"); // Import the cors package
 
@@ -14,6 +16,34 @@ const db = mysql.createPool({
 });
 
 app.use(cors());
+
+// Set the storage engine
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./videos");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+// Filter the video file
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (
+    ext === ".mp4" ||
+    ext === ".mkv" ||
+    ext === ".avi" ||
+    ext === ".mov" ||
+    ext === ".webm"
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only video files are allowed."), false);
+  }
+};
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 // Fetch the first question
 app.get("/api/questions/:id", async (req, res) => {
@@ -38,7 +68,6 @@ app.post("/api/questions", async (req, res) => {
     next_question_no,
     video_url,
     video_title,
-    video_file,
   } = req.body;
 
   if (options === "") {
@@ -66,20 +95,49 @@ app.post("/api/questions", async (req, res) => {
         video_title,
       ]
     );
-    // Save the video file to the server
-    if (video_file) {
-      const path = `./public/resources/${video_file.name}`;
-      video_file.mv(path, (error) => {
-        if (error) {
-          console.error(error);
-        }
-      });
-    }
     res.json({ message: "Question added successfully" });
   } catch (error) {
     res.status(500).json({ error: "Error adding question" });
     console.log(error);
   }
+});
+
+// Get all questions
+app.get("/api/questions", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM Questions");
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching questions" });
+  }
+});
+
+// Delete received questions
+app.post("/api/delete", async (req, res) => {
+  const { selected } = req.body;
+  try {
+    await db.query("DELETE FROM questions WHERE id IN (?)", [selected]);
+    res.json({ message: "Questions deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting questions" });
+  }
+});
+
+// Save the video file
+app.post("/api/upload", upload.single("videoFile"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error uploading video" });
+  }
+});
+
+// Fetch the video file
+app.get("/api/videos/:filename", (req, res) => {
+  const { filename } = req.params;
+  res.sendFile(path.join(__dirname, `videos/${filename}`));
 });
 
 // Fetch the next question based on the user’s answer

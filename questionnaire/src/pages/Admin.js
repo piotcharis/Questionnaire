@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   TextField,
@@ -6,11 +6,20 @@ import {
   Typography,
   Box,
   MenuItem,
+  Alert,
+  Snackbar,
+  Dialog,
+  AppBar,
+  Toolbar,
+  Slide,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import axios from "axios";
+
+// import QuestionsTable from "../components/QuestionsTable";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -24,6 +33,10 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const Admin = () => {
   const [questionText, setQuestionText] = useState("");
   const [questionType, setQuestionType] = useState("text");
@@ -32,10 +45,40 @@ const Admin = () => {
   const [nextQuestionNo, setNextQuestionNo] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
   const [videoFile, setVideoFile] = useState(null);
+
   const [errorText, setErrorText] = useState("");
   const [errorOptions, setErrorOptions] = useState("");
   const [errorVideoTitle, setErrorVideoTitle] = useState("");
   const [errorVideoFile, setErrorVideoFile] = useState("");
+
+  const [alertError, setAlertError] = useState(false);
+  const [alertSuccess, setAlertSuccess] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const [questions, setQuestions] = useState([]);
+  const [questionColumns, setQuestionColumns] = useState([]);
+
+  useEffect(() => {
+    getQuestions();
+
+    // Get the columns of the questions table from the questions json
+    if (questions.length > 0) {
+      setQuestionColumns(Object.keys(questions[0]));
+    }
+  }, []);
+
+  const getQuestions = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/questions");
+      setQuestions(response.data);
+    } catch (err) {
+      console.error("Error fetching questions:", err);
+      setAlertError(true);
+      setAlertMessage("Failed to fetch questions");
+    }
+  };
 
   const handleAddQuestion = async () => {
     if (!questionText) {
@@ -82,8 +125,6 @@ const Admin = () => {
       setNextQuestionNo(null);
     }
 
-    // Video file needs to be sent as FormData
-    // TODO: Fix video file upload
     const formData = new FormData();
     if (videoFile) {
       formData.append("videoFile", videoFile);
@@ -103,7 +144,6 @@ const Admin = () => {
           next_question_no: nextQuestionNo,
           video_url: videoFile ? videoFile.name : null,
           video_title: videoTitle,
-          videoFile: formData,
         }),
       });
 
@@ -122,15 +162,93 @@ const Admin = () => {
       setErrorOptions("");
       setErrorVideoTitle("");
       setErrorVideoFile("");
-      alert("Question added successfully");
+
+      setAlertSuccess(true);
+      setAlertMessage("Question added successfully");
     } catch (err) {
       console.error("Error adding question:", err);
-      alert("Failed to add question");
+      setAlertError(true);
+      setAlertMessage("Failed to add question");
     }
+
+    getQuestions(); // Fetch the questions again to update the list
+
+    if (!videoFile) {
+      return;
+    }
+
+    // Send the video file separately
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload video file");
+      }
+    } catch (err) {
+      console.error("Error uploading video file:", err);
+      setAlertError(true);
+      setAlertMessage("Failed to upload video file");
+    }
+  };
+
+  const handleClose = () => {
+    setAlertError(false);
+    setAlertSuccess(false);
+    setAlertMessage("");
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
     <Container maxWidth="sm">
+      {alertError && (
+        <Snackbar
+          autoHideDuration={2000}
+          open={alertError}
+          onClose={handleClose}
+        >
+          <Alert
+            severity="error"
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {alertSuccess && !alertError && (
+        <Snackbar
+          autoHideDuration={2000}
+          open={alertSuccess}
+          onClose={handleClose}
+        >
+          <Alert
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+      )}
+
       <Box mt={5}>
         <Typography variant="h4" gutterBottom>
           Admin Page
@@ -239,7 +357,10 @@ const Admin = () => {
             />
           </>
         )}
-        <Box mt={2}>
+        <Box
+          mt={2}
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -248,6 +369,43 @@ const Admin = () => {
           >
             Add Question
           </Button>
+
+          {/* Button to show all questions */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialog}
+            style={{ marginLeft: 50 }}
+          >
+            Show Questions
+          </Button>
+          <Dialog
+            fullScreen
+            open={openDialog}
+            onClose={handleCloseDialog}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: "relative" }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseDialog}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography
+                  sx={{ ml: 2, flex: 1 }}
+                  variant="h6"
+                  component="div"
+                >
+                  Questions
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <QuestionsTable rows={questions} columns={questionColumns} />
+          </Dialog>
         </Box>
       </Box>
     </Container>

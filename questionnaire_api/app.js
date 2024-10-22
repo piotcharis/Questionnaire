@@ -167,6 +167,40 @@ app.post("/api/previous-question", async (req, res) => {
   }
 });
 
+// Add the user’s answer to the database
+app.post("/api/answers", async (req, res) => {
+  const { question_id, answer, session_id } = req.body;
+
+  // Check if there is already an answer for the question with the same session ID
+  const [rows] = await db.query(
+    "SELECT * FROM responses WHERE question_id = ? AND session_id = ?",
+    [question_id, session_id]
+  );
+
+  if (rows.length > 0) {
+    // Update the answer
+    try {
+      await db.query(
+        "UPDATE responses SET answer = ? WHERE question_id = ? AND session_id = ?",
+        [answer, question_id, session_id]
+      );
+      res.json({ message: "Answer updated successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Error updating answer" });
+    }
+  } else {
+    try {
+      await db.query(
+        "INSERT INTO responses (question_id, answer, session_id) VALUES (?, ?, ?)",
+        [question_id, answer, session_id]
+      );
+      res.json({ message: "Answer added successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Error adding answer" });
+    }
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });

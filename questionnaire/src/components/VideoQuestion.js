@@ -63,7 +63,7 @@ const VideoQuestion = ({ question }) => {
     if (question.options === null) {
       return (
         <TextField
-          id="text-answer"
+          id="answer"
           variant="outlined"
           label="Your answer"
           style={{ marginTop: 50 }}
@@ -74,11 +74,7 @@ const VideoQuestion = ({ question }) => {
     } else {
       return (
         <FormControl style={{ marginTop: 50 }}>
-          <RadioGroup
-            aria-labelledby="text-answer"
-            defaultValue="female"
-            name="radio-buttons-group"
-          >
+          <RadioGroup aria-labelledby="answer" name="radio-buttons-group">
             {renderOptions()}
           </RadioGroup>
         </FormControl>

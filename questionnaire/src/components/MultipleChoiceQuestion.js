@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 
 const MultipleChoiceQuestion = ({ question }) => {
   const [options, setOptions] = React.useState([]);
+  const [value, setValue] = React.useState("");
 
   React.useEffect(() => {
     // Options are stored as a JSON string in the database
@@ -31,6 +32,10 @@ const MultipleChoiceQuestion = ({ question }) => {
     return html;
   }
 
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
   return (
     <Container
       style={{
@@ -41,19 +46,20 @@ const MultipleChoiceQuestion = ({ question }) => {
       }}
     >
       <Stack spacing={2}>
-        <label htmlFor="text-answer" style={{ marginBottom: 50, fontSize: 25 }}>
+        <label htmlFor="answer" style={{ marginBottom: 50, fontSize: 25 }}>
           {question.question_text}
         </label>
         <FormControl>
           <RadioGroup
-            aria-labelledby="text-answer"
-            defaultValue="female"
+            aria-labelledby="answer"
             name="radio-buttons-group"
+            onChange={handleChange}
           >
             {renderOptions()}
           </RadioGroup>
         </FormControl>
       </Stack>
+      <input type="hidden" id="answer" value={value} />
     </Container>
   );
 };

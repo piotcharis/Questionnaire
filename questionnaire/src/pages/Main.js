@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid2";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import TextQuestion from "../components/TextQuestion";
 import VideoQuestion from "../components/VideoQuestion";
@@ -20,9 +16,11 @@ import Navbar from "../components/Navbar";
 function Main() {
   const { questionId } = useParams(); // Get the question id from the URL
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [finished, setFinished] = useState(false);
+
+  const [answerError, setAnswerError] = useState(false);
+
   const navigate = useNavigate(); // For programmatic navigation
 
   useEffect(() => {
@@ -71,6 +69,23 @@ function Main() {
   }
 
   const handleNext = async () => {
+    // Get the answer from the input field
+    const answer = document.getElementById("answer");
+
+    console.log(answer.value);
+
+    if (answer === null || answer.value === "") {
+      setAnswerError(true);
+      return;
+    }
+
+    // Send the answer to the server
+    await axios.post("http://localhost:3000/api/answers", {
+      question_id: currentQuestion.id,
+      answer: answer.value,
+      session_id: localStorage.getItem("session_id"),
+    });
+
     if (currentQuestion.next_question_yes === null) {
       setFinished(true);
       return;
@@ -103,12 +118,30 @@ function Main() {
     }
   };
 
+  const handleClose = () => {
+    setAnswerError(false);
+  };
+
   return (
     <div
       className="App"
       style={{ fontFamily: "Roboto, sans-serif", fontWeight: "400" }}
     >
       <Navbar />
+      <Snackbar
+        autoHideDuration={2000}
+        open={answerError}
+        onClose={handleClose}
+      >
+        <Alert
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+          onClose={handleClose}
+        >
+          Please enter an answer
+        </Alert>
+      </Snackbar>
       {questionType()}
       <br />
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>

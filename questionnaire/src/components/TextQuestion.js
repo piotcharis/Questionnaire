@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import { TextField } from "@mui/material";
 import Stack from "@mui/material/Stack";
 
-const TextQuestion = ({ question, onAnswerChange }) => {
+const TextQuestion = ({ question }) => {
   return (
     <Container
       style={{
@@ -14,11 +14,11 @@ const TextQuestion = ({ question, onAnswerChange }) => {
       }}
     >
       <Stack spacing={2}>
-        <label htmlFor="text-answer" style={{ marginBottom: 50, fontSize: 25 }}>
+        <label htmlFor="answer" style={{ marginBottom: 50, fontSize: 25 }}>
           {question.question_text}
         </label>
         <TextField
-          id="text-answer"
+          id="answer"
           variant="outlined"
           label="Your answer"
           multiline

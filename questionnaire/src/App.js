@@ -11,6 +11,9 @@ import Main from "./pages/Main";
 import Admin from "./pages/Admin";
 import Thanks from "./components/Thanks";
 
+const unique_id = Math.random().toString(36);
+localStorage.setItem("session_id", unique_id);
+
 function App() {
   return (
     <Router>

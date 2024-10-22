@@ -13,10 +13,10 @@ const app = express();
 app.use(express.json());
 
 const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "15052000",
-  database: "questionnaire_db",
+  host: env.DB_HOST,
+  user: env.DB_USER,
+  password: env.DB_PASSWORD,
+  database: env.DB_NAME,
 });
 
 app.use(cors());
@@ -24,7 +24,7 @@ app.use(cors());
 // Set the storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./videos");
+    cb(null, env.VIDEO_SAVE_PATH);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);

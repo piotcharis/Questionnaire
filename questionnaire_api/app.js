@@ -201,6 +201,16 @@ app.post("/api/answers", async (req, res) => {
   }
 });
 
+// Fetch all answers
+app.get("/api/answers", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM responses");
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching answers" });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });

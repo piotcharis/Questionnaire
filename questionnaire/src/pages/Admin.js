@@ -97,6 +97,8 @@ const Admin = () => {
       (question) => question.question_text === questionText
     );
 
+    var new_options = options;
+
     if (questionExists) {
       setAlertError(true);
       setAlertMessage("Question already exists");
@@ -123,12 +125,14 @@ const Admin = () => {
       return;
     }
 
-    if (options !== "" && options[0] !== "{") {
+    if (new_options !== "" && new_options[0] !== "{") {
       // Get the options as an array
-      const optionsArray = options.split(",").map((option) => option.trim());
-      setOptions('{"options": ' + JSON.stringify(optionsArray) + "}");
+      const optionsArray = options
+        .split(",")
+        .map((new_options) => new_options.trim());
+      new_options = '{"options": ' + JSON.stringify(optionsArray) + "}";
     } else {
-      setOptions(null);
+      new_options = null;
     }
 
     if (videoTitle === "") {
@@ -161,7 +165,7 @@ const Admin = () => {
         body: JSON.stringify({
           question_text: questionText,
           question_type: questionType,
-          options: options,
+          options: new_options,
           next_question_yes: nextQuestionYes,
           next_question_no: nextQuestionNo,
           video_url: videoFile ? videoFile.name : null,

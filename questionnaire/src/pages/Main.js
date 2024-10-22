@@ -38,6 +38,19 @@ function Main() {
     fetchQuestion();
   }, [questionId]); // Fetch new question every time the questionId changes
 
+  // If the back button of the browser is clicked, pop the last question from the question_order array
+  window.onpopstate = function () {
+    let question_order = [];
+    if (localStorage.getItem("question_order") !== null) {
+      question_order = JSON.parse(localStorage.getItem("question_order"));
+    }
+
+    if (question_order.length > 0) {
+      question_order.pop();
+      localStorage.setItem("question_order", JSON.stringify(question_order));
+    }
+  };
+
   if (loading) {
     return (
       <div

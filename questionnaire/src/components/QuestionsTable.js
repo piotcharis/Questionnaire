@@ -24,6 +24,8 @@ import {
   Alert,
 } from "@mui/material";
 
+const { REACT_APP_API_LINK } = process.env;
+
 function EnhancedTableHead(props) {
   const {
     onSelectAllClick,
@@ -200,7 +202,7 @@ const QuestionsTable = ({ questions, columns }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/api/delete", {
+      const response = await axios.post(REACT_APP_API_LINK + "/delete", {
         selected,
       });
       console.log(response);

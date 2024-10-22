@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 
 import Navbar from "../components/Navbar";
+
+const { REACT_APP_API_LINK } = process.env;
 
 const chartSetting = {
   yAxis: [
@@ -35,7 +37,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/questions");
+        const response = await axios.get(REACT_APP_API_LINK + "/questions");
         setQuestions(response.data);
       } catch (error) {
         console.error("Error fetching the questions:", error);
@@ -47,7 +49,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAnswers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/answers");
+        const response = await axios.get(REACT_APP_API_LINK + "/answers");
         setAnswers(response.data);
       } catch (error) {
         console.error("Error fetching the answers:", error);
@@ -62,11 +64,11 @@ const Dashboard = () => {
       (question.question_type === "video" && question.options !== null)
   );
 
-  const text_questions = questions.filter(
-    (question) =>
-      question.question_type === "text" ||
-      (question.question_type === "video" && question.options === null)
-  );
+  // const text_questions = questions.filter(
+  //   (question) =>
+  //     question.question_type === "text" ||
+  //     (question.question_type === "video" && question.options === null)
+  // );
 
   const getAnswersCount = (question_id, option) => {
     const filtered_answers = answers.filter(

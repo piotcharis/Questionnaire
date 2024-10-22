@@ -23,11 +23,13 @@ function Main() {
 
   const navigate = useNavigate(); // For programmatic navigation
 
+  const { REACT_APP_API_LINK } = process.env;
+
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/questions/${questionId}`
+          REACT_APP_API_LINK + `/questions/${questionId}`
         );
         setCurrentQuestion(response.data);
         setLoading(false);
@@ -93,7 +95,7 @@ function Main() {
     }
 
     // Send the answer to the server
-    await axios.post("http://localhost:3000/api/answers", {
+    await axios.post(REACT_APP_API_LINK + "/answers", {
       question_id: currentQuestion.id,
       answer: answer.value,
       session_id: localStorage.getItem("session_id"),

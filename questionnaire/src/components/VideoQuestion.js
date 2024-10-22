@@ -12,6 +12,8 @@ import FormControl from "@mui/material/FormControl";
 import { TextField } from "@mui/material";
 import axios from "axios";
 
+const { REACT_APP_API_LINK } = process.env;
+
 const VideoQuestion = ({ question }) => {
   const [videoFile, setVideoFile] = useState(null);
 
@@ -20,7 +22,7 @@ const VideoQuestion = ({ question }) => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/videos/${question.video_url}`,
+          REACT_APP_API_LINK + `/videos/${question.video_url}`,
           {
             responseType: "blob",
           }

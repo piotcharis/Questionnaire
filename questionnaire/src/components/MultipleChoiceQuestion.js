@@ -46,7 +46,10 @@ const MultipleChoiceQuestion = ({ question }) => {
       }}
     >
       <Stack spacing={2}>
-        <label htmlFor="answer" style={{ marginBottom: 50, fontSize: 25 }}>
+        <label
+          htmlFor="answer"
+          style={{ marginBottom: 50, fontSize: 25, marginTop: 50 }}
+        >
           {question.question_text}
         </label>
         <FormControl>

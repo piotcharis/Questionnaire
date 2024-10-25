@@ -3,6 +3,13 @@ import { CircularProgress, Paper, Typography, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { TableVirtuoso } from "react-virtuoso";
 import axios from "axios";
 
 import Navbar from "../components/Navbar";
@@ -30,10 +37,30 @@ const chartSetting = {
   },
 };
 
+const VirtuosoTableComponents = {
+  Scroller: React.forwardRef((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table
+      {...props}
+      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+    />
+  ),
+  TableHead: React.forwardRef((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: React.forwardRef((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
+
 const Dashboard = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [n_responses, setN_responses] = useState(0);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -60,17 +87,22 @@ const Dashboard = () => {
     fetchAnswers();
   }, []);
 
+  useEffect(() => {
+    const unique_sessions = new Set(answers.map((answer) => answer.session_id));
+    setN_responses(unique_sessions.size);
+  }, [answers]);
+
   const multiple_choice_questions = questions.filter(
     (question) =>
       question.question_type === "multiple_choice" ||
       (question.question_type === "video" && question.options !== null)
   );
 
-  // const text_questions = questions.filter(
-  //   (question) =>
-  //     question.question_type === "text" ||
-  //     (question.question_type === "video" && question.options === null)
-  // );
+  const text_questions = questions.filter(
+    (question) =>
+      question.question_type === "text" ||
+      (question.question_type === "video" && question.options === null)
+  );
 
   const getAnswersCount = (question_id, option) => {
     const filtered_answers = answers.filter(
@@ -110,13 +142,18 @@ const Dashboard = () => {
     }
   };
 
-  const make_charts = () => {
+  const make_charts_multiple_questions = () => {
     return multiple_choice_questions.map((question) => {
       const dataset = prepareData(question);
       const options = getOptions(question);
 
       return (
-        <Grid size={6}>
+        <Grid
+          size={4}
+          item
+          key={question.id}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
           <BarChart
             dataset={dataset}
             xAxis={[{ scaleType: "band", dataKey: "name" }]}
@@ -124,6 +161,67 @@ const Dashboard = () => {
             {...chartSetting}
           />
         </Grid>
+      );
+    });
+  };
+
+  const make_charts_text_questions = () => {
+    return text_questions.map((question) => {
+      const rows = answers
+        .filter((answer) => answer.question_id === question.id)
+        .map((answer) => {
+          return { question_id: answer.answer };
+        });
+
+      const label = question.question_text;
+
+      const columns = [{ dataKey: "question_id", label: label, width: 200 }];
+
+      function fixedHeaderContent() {
+        return (
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.dataKey}
+                variant="head"
+                align={column.numeric || false ? "right" : "left"}
+                style={{ width: column.width }}
+                sx={{ backgroundColor: "#1976d2", color: "white" }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        );
+      }
+
+      function rowContent(_index, row) {
+        return (
+          <React.Fragment>
+            {columns.map((column) => (
+              <TableCell
+                key={column.dataKey}
+                align={column.numeric || false ? "right" : "left"}
+              >
+                {row[column.dataKey]}
+              </TableCell>
+            ))}
+          </React.Fragment>
+        );
+      }
+
+      return (
+        <Paper
+          style={{ height: 300, width: "100%", marginTop: 30 }}
+          key={question.id}
+        >
+          <TableVirtuoso
+            data={rows}
+            components={VirtuosoTableComponents}
+            fixedHeaderContent={fixedHeaderContent}
+            itemContent={rowContent}
+          />
+        </Paper>
       );
     });
   };
@@ -157,10 +255,23 @@ const Dashboard = () => {
       </Typography>
       <Paper style={{ padding: 20 }}>
         <Typography variant="h6" gutterBottom>
+          Number of responses: {n_responses}
+        </Typography>
+      </Paper>
+      <Paper style={{ padding: 20 }}>
+        <Typography variant="h6" gutterBottom>
           Multiple Choice Questions
         </Typography>
+        <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {make_charts_multiple_questions()}
+        </Grid>
+      </Paper>
+      <Paper style={{ padding: 20 }}>
+        <Typography variant="h6" gutterBottom>
+          Text Questions
+        </Typography>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          {make_charts()}
+          {make_charts_text_questions()}
         </Grid>
       </Paper>
     </div>

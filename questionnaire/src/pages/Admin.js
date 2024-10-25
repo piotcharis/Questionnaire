@@ -298,7 +298,13 @@ const Admin = () => {
       </Snackbar>
     </>
   ) : (
-    <>
+    <div
+      className="App"
+      style={{
+        fontFamily: "Roboto, sans-serif",
+        fontWeight: "400",
+      }}
+    >
       <Navbar page={"admin"} />
       <Container maxWidth="sm">
         {alertError && (
@@ -495,7 +501,7 @@ const Admin = () => {
           </Box>
         </Box>
       </Container>
-    </>
+    </div>
   );
 };
 

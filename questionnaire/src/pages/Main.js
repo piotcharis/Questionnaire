@@ -8,7 +8,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
 import TextQuestion from "../components/TextQuestion";
-import VideoQuestion from "../components/VideoQuestion";
+import VisualQuestion from "../components/VisualQuestion";
 import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
 import Thanks from "../components/Thanks";
 import Navbar from "../components/Navbar";
@@ -77,7 +77,7 @@ function Main() {
     if (currentQuestion.question_type === "text") {
       return <TextQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "video") {
-      return <VideoQuestion question={currentQuestion} />;
+      return <VisualQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_choice") {
       return <MultipleChoiceQuestion question={currentQuestion} />;
     }

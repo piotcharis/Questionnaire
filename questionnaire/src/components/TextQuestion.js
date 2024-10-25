@@ -14,7 +14,10 @@ const TextQuestion = ({ question }) => {
       }}
     >
       <Stack spacing={2}>
-        <label htmlFor="answer" style={{ marginBottom: 50, fontSize: 25 }}>
+        <label
+          htmlFor="answer"
+          style={{ marginBottom: 50, fontSize: 25, marginTop: 50 }}
+        >
           {question.question_text}
         </label>
         <TextField
@@ -22,7 +25,8 @@ const TextQuestion = ({ question }) => {
           variant="outlined"
           label="Your answer"
           multiline
-          maxRows={4}
+          maxRows={6}
+          style={{ width: "40vw", marginTop: "8vh" }}
         />
       </Stack>
     </Container>

@@ -5,14 +5,7 @@ import Stack from "@mui/material/Stack";
 
 const TextQuestion = ({ question }) => {
   return (
-    <Container
-      style={{
-        width: "100vw",
-        height: "80vh",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <Container className="outer-container">
       <Stack spacing={2}>
         <label
           htmlFor="answer"

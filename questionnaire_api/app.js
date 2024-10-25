@@ -24,7 +24,7 @@ app.use(cors());
 // Set the storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, env.VIDEO_SAVE_PATH);
+    cb(null, env.MEDIA_SAVE_PATH);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
 });
 
 // Filter the video file
-const fileFilter = (req, file, cb) => {
+const videoFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   if (
     ext === ".mp4" ||
@@ -47,7 +47,19 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+// Filter the image file
+const imageFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === ".jpg" || ext === ".jpeg" || ext === ".png") {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only image files are allowed."), false);
+  }
+};
+
+const video_upload = multer({ storage: storage, videoFilter: videoFilter });
+
+const image_upload = multer({ storage: storage, imageFilter: imageFilter });
 
 // Fetch the first question
 app.get("/api/questions/:id", async (req, res) => {
@@ -70,8 +82,8 @@ app.post("/api/questions", async (req, res) => {
     options,
     next_question_yes,
     next_question_no,
-    video_url,
-    video_title,
+    url,
+    media_title,
   } = req.body;
 
   if (options === "") {
@@ -88,15 +100,15 @@ app.post("/api/questions", async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, video_url, video_title) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         question_text,
         question_type,
         options,
         next_question_yes,
         next_question_no,
-        video_url,
-        video_title,
+        url,
+        media_title,
       ]
     );
     res.json({ message: "Question added successfully" });
@@ -128,7 +140,7 @@ app.post("/api/delete", async (req, res) => {
 });
 
 // Save the video file
-app.post("/api/upload", upload.single("videoFile"), (req, res) => {
+app.post("/api/video_upload", video_upload.single("videoFile"), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -141,7 +153,24 @@ app.post("/api/upload", upload.single("videoFile"), (req, res) => {
 // Fetch the video file
 app.get("/api/videos/:filename", (req, res) => {
   const { filename } = req.params;
-  res.sendFile(path.join(__dirname, `videos/${filename}`));
+  res.sendFile(path.join(__dirname, env.MEDIA_SAVE_PATH + `/${filename}`));
+});
+
+// Save the image file
+app.post("/api/image_upload", image_upload.single("imageFile"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error uploading image" });
+  }
+});
+
+// Fetch the image file
+app.get("/api/images/:filename", (req, res) => {
+  const { filename } = req.params;
+  res.sendFile(path.join(__dirname, env.MEDIA_SAVE_PATH + `/${filename}`));
 });
 
 // Fetch the next question based on the user’s answer

@@ -320,8 +320,8 @@ const QuestionsTable = ({ questions, columns }) => {
                     <TableCell align="left">{row.options}</TableCell>
                     <TableCell align="left">{row.next_question_yes}</TableCell>
                     <TableCell align="left">{row.next_question_no}</TableCell>
-                    <TableCell align="left">{row.video_title}</TableCell>
-                    <TableCell align="left">{row.video_url}</TableCell>
+                    <TableCell align="left">{row.media_title}</TableCell>
+                    <TableCell align="left">{row.url}</TableCell>
                   </TableRow>
                 );
               })}

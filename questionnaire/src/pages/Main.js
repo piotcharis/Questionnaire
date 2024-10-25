@@ -8,7 +8,8 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
 import TextQuestion from "../components/TextQuestion";
-import VisualQuestion from "../components/VisualQuestion";
+import VideoQuestion from "../components/VideoQuestion";
+import ImageQuestion from "../components/ImageQuestion";
 import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
 import Thanks from "../components/Thanks";
 import Navbar from "../components/Navbar";
@@ -55,15 +56,7 @@ function Main() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: 50,
-          height: "90vh",
-          alignItems: "center",
-        }}
-      >
+      <div className="loading-container">
         <CircularProgress />
       </div>
     );
@@ -77,7 +70,9 @@ function Main() {
     if (currentQuestion.question_type === "text") {
       return <TextQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "video") {
-      return <VisualQuestion question={currentQuestion} />;
+      return <VideoQuestion question={currentQuestion} />;
+    } else if (currentQuestion.question_type === "image") {
+      return <ImageQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_choice") {
       return <MultipleChoiceQuestion question={currentQuestion} />;
     }
@@ -138,10 +133,7 @@ function Main() {
   };
 
   return (
-    <div
-      className="App"
-      style={{ fontFamily: "Roboto, sans-serif", fontWeight: "400" }}
-    >
+    <div className="App">
       <Navbar />
       <Snackbar
         autoHideDuration={2000}
@@ -159,7 +151,12 @@ function Main() {
       </Snackbar>
       {questionType()}
       <br />
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Grid
+        container
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        style={{ marginBottom: 50 }}
+      >
         <Grid item size={6}>
           <Button variant="contained" onClick={handlePrevious}>
             Previous

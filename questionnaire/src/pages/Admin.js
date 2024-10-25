@@ -48,11 +48,15 @@ const Admin = () => {
   const [nextQuestionNo, setNextQuestionNo] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
   const [videoFile, setVideoFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageTitle, setImageTitle] = useState("");
 
   const [errorText, setErrorText] = useState("");
   const [errorOptions, setErrorOptions] = useState("");
   const [errorVideoTitle, setErrorVideoTitle] = useState("");
   const [errorVideoFile, setErrorVideoFile] = useState("");
+  const [errorImageTitle, setErrorImageTitle] = useState("");
+  const [errorImageFile, setErrorImageFile] = useState("");
 
   const [alertError, setAlertError] = useState(false);
   const [alertSuccess, setAlertSuccess] = useState(false);
@@ -148,6 +152,16 @@ const Admin = () => {
       return;
     }
 
+    if (questionType === "image" && !imageTitle) {
+      setErrorImageTitle("Image Title cannot be empty for image questions");
+      return;
+    }
+
+    if (questionType === "image" && !imageFile) {
+      setErrorImageFile("Image file cannot be empty for image questions");
+      return;
+    }
+
     if (new_options !== "" && new_options[0] !== "{") {
       // Get the options as an array
       const optionsArray = options
@@ -166,6 +180,14 @@ const Admin = () => {
       setVideoFile(null);
     }
 
+    if (imageTitle === "") {
+      setImageTitle(null);
+    }
+
+    if (imageFile === "") {
+      setImageFile(null);
+    }
+
     if (nextQuestionYes === "") {
       setNextQuestionYes(null);
     }
@@ -177,6 +199,10 @@ const Admin = () => {
     const formData = new FormData();
     if (videoFile) {
       formData.append("videoFile", videoFile);
+    }
+
+    if (imageFile) {
+      formData.append("imageFile", imageFile);
     }
 
     try {
@@ -191,8 +217,8 @@ const Admin = () => {
           options: new_options,
           next_question_yes: nextQuestionYes,
           next_question_no: nextQuestionNo,
-          video_url: videoFile ? videoFile.name : null,
-          video_title: videoTitle,
+          url: videoFile ? videoFile.name : imageFile ? imageFile.name : null,
+          media_title: videoTitle ? videoTitle : imageTitle ? imageTitle : null,
         }),
       });
 
@@ -211,6 +237,8 @@ const Admin = () => {
       setErrorOptions("");
       setErrorVideoTitle("");
       setErrorVideoFile("");
+      setErrorImageTitle("");
+      setErrorImageFile("");
 
       setAlertSuccess(true);
       setAlertMessage("Question added successfully");
@@ -222,29 +250,50 @@ const Admin = () => {
 
     getQuestions(); // Fetch the questions again to update the list
 
-    if (!videoFile) {
-      return;
+    if (videoFile) {
+      // Send the video file separately
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/video_upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload video file");
+        }
+      } catch (err) {
+        console.error("Error uploading video file:", err);
+        setAlertError(true);
+        setAlertMessage("Failed to upload video file");
+      }
     }
 
-    // Send the video file separately
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    if (imageFile) {
+      // Send the image file separately
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/image_upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to upload video file");
+        if (!response.ok) {
+          throw new Error("Failed to upload image file");
+        }
+      } catch (err) {
+        console.error("Error uploading image file:", err);
+        setAlertError(true);
+        setAlertMessage("Failed to upload image file");
       }
-    } catch (err) {
-      console.error("Error uploading video file:", err);
-      setAlertError(true);
-      setAlertMessage("Failed to upload video file");
     }
   };
 
@@ -267,14 +316,7 @@ const Admin = () => {
   const renderTable = hasQuestions ? (
     <QuestionsTable questions={questions} columns={questionColumns} />
   ) : (
-    <Box
-      sx={{
-        display: "flex",
-        height: "100vh",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Box className="question-table">
       <CircularProgress />
     </Box>
   );
@@ -298,13 +340,7 @@ const Admin = () => {
       </Snackbar>
     </>
   ) : (
-    <div
-      className="App"
-      style={{
-        fontFamily: "Roboto, sans-serif",
-        fontWeight: "400",
-      }}
-    >
+    <div className="App">
       <Navbar page={"admin"} />
       <Container maxWidth="sm">
         {alertError && (
@@ -366,6 +402,7 @@ const Admin = () => {
           >
             <MenuItem value="text">Text</MenuItem>
             <MenuItem value="video">Video</MenuItem>
+            <MenuItem value="image">Image</MenuItem>
             <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
           </TextField>
           {questionType === "multiple_choice" && (
@@ -381,7 +418,7 @@ const Admin = () => {
               required
             />
           )}
-          {questionType === "video" && (
+          {(questionType === "video" || questionType === "image") && (
             <TextField
               label="Options (separated by commas)"
               variant="outlined"
@@ -445,6 +482,48 @@ const Admin = () => {
                 required
                 error={!!errorVideoFile}
                 helperText={errorVideoFile}
+                disabled
+              />
+            </>
+          )}
+          {questionType === "image" && (
+            <>
+              <TextField
+                label="Image Title"
+                variant="outlined"
+                fullWidth
+                value={imageTitle}
+                onChange={(e) => setImageTitle(e.target.value)}
+                margin="normal"
+                required
+                error={!!errorImageTitle}
+                helperText={errorImageTitle}
+              />
+              <TextField
+                label="Image File"
+                variant="outlined"
+                fullWidth
+                value={imageFile ? imageFile.name : ""}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      color="primary"
+                      component="label"
+                      htmlFor="image-file"
+                    >
+                      <FileUploadIcon />
+                      <VisuallyHiddenInput
+                        id="image-file"
+                        type="file"
+                        onChange={(e) => setImageFile(e.target.files[0])}
+                      />
+                    </IconButton>
+                  ),
+                }}
+                margin="normal"
+                required
+                error={!!errorImageFile}
+                helperText={errorImageFile}
                 disabled
               />
             </>

@@ -9,12 +9,12 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import { TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import axios from "axios";
 
 const { REACT_APP_API_LINK } = process.env;
 
-const VisualQuestion = ({ question }) => {
+const VideoQuestion = ({ question }) => {
   const [videoFile, setVideoFile] = useState(null);
   const [value, setValue] = React.useState("");
 
@@ -23,7 +23,7 @@ const VisualQuestion = ({ question }) => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
-          REACT_APP_API_LINK + `/videos/${question.video_url}`,
+          REACT_APP_API_LINK + `/videos/${question.url}`,
           {
             responseType: "blob",
           }
@@ -41,7 +41,7 @@ const VisualQuestion = ({ question }) => {
         URL.revokeObjectURL(videoFile);
       }
     };
-  }, [question.video_url]);
+  }, [question.url]);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -94,15 +94,17 @@ const VisualQuestion = ({ question }) => {
     }
   }
 
+  if (!videoFile) {
+    return (
+      <div className="loading-container">
+        {" "}
+        <CircularProgress />{" "}
+      </div>
+    );
+  }
+
   return (
-    <Container
-      style={{
-        width: "100vw",
-        height: "80vh",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <Container className="outer-container">
       <Stack spacing={2}>
         <label htmlFor="text-answer" style={{ marginBottom: 50, fontSize: 25 }}>
           {question.question_text}
@@ -112,12 +114,12 @@ const VisualQuestion = ({ question }) => {
             component="video"
             sx={{ height: "fit-content" }}
             src={videoFile}
-            title={question.video_title}
+            title={question.media_title}
             controls
           />
           <CardContent>
             <Typography gutterBottom variant="h7" component="div">
-              {question.video_title}
+              {question.media_title}
             </Typography>
           </CardContent>
         </Card>
@@ -127,4 +129,4 @@ const VisualQuestion = ({ question }) => {
   );
 };
 
-export default VisualQuestion;
+export default VideoQuestion;

@@ -3,16 +3,7 @@ import { Container, Typography } from "@mui/material";
 
 const Thanks = () => {
   return (
-    <Container
-      style={{
-        textAlign: "center",
-        marginTop: "50px",
-        height: "80vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
-    >
+    <Container className="thanks-container">
       <Typography variant="h4" component="h1" gutterBottom>
         Thank You!
       </Typography>

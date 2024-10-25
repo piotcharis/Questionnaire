@@ -228,14 +228,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          height: "100vh",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <Box className="question-table">
         <CircularProgress />
       </Box>
     );

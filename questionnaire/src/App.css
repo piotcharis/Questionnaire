@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
 }
 
 .App-logo {
@@ -35,4 +37,35 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.outer-container {
+  width: 100vw;
+  height: 70rem;
+  display: flex;
+  justify-content: center;
+}
+
+.thanks-container {
+  text-align: center;
+  margin-top: 50px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.question-table {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50;
+  height: 90vh;
+  align-items: center;
 }

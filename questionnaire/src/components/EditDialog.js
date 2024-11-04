@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -11,7 +12,7 @@ import { MenuItem } from "@mui/material";
 
 const { REACT_APP_API_LINK } = process.env;
 
-export default function FormDialog({ open, setOpen, question }) {
+export default function FormDialog({ open, setOpen, question, onClose }) {
   const handleClose = () => {
     setOpen(false);
   };
@@ -19,13 +20,11 @@ export default function FormDialog({ open, setOpen, question }) {
   const [question_type, setQuestion_type] = React.useState("");
 
   const handleChange = (event) => {
-    console.log(event.target.value);
     setQuestion_type(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(event.currentTarget.options.value);
     // Make the options into a json string if it is not empty and is not already a json string
     if (event.currentTarget.options.value !== "") {
       var new_options = event.currentTarget.options.value;
@@ -49,6 +48,7 @@ export default function FormDialog({ open, setOpen, question }) {
     axios
       .put(REACT_APP_API_LINK + `/questions/${question.id}`, formJson)
       .then((response) => {
+        onClose(response.data);
         setOpen(false);
       });
   };
@@ -109,7 +109,7 @@ export default function FormDialog({ open, setOpen, question }) {
           id="question_type"
           label="Question Type"
           name="question_type"
-          defaultValue={questionType}
+          defaultValue={questionType ? questionType : ""}
           select
           fullWidth
           onChange={handleChange}

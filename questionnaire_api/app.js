@@ -301,7 +301,12 @@ app.put("/api/questions/:id", async (req, res) => {
         req.params.id,
       ]
     );
-    res.json({ message: "Question updated successfully" });
+    // Return the updated question
+    const [rows] = await db.query("SELECT * FROM questions WHERE id = ?", [
+      req.params.id,
+    ]);
+
+    res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ error: "Error updating question" + error });
   }

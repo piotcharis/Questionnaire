@@ -259,8 +259,10 @@ const QuestionsTable = ({ questions, columns }) => {
     setEditDialog(true);
   };
 
-  const handleEditClose = () => {
-    fetchQuestions();
+  const handleEditClose = (editedQuestion) => {
+    if (editedQuestion) {
+      fetchQuestions();
+    }
   };
 
   const handleClose = () => {
@@ -312,7 +314,7 @@ const QuestionsTable = ({ questions, columns }) => {
         <EditDialog
           open={editDialog}
           setOpen={setEditDialog}
-          question={questions.find((question) => question.id === selected[0])}
+          question={rows.find((row) => row.id === selected[0])}
           onClose={handleEditClose}
         />
         <EnhancedTableToolbar

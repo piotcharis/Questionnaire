@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import axios from "axios";
 import {
   Box,
@@ -23,6 +24,8 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+
+import EditDialog from "./EditDialog";
 
 const { REACT_APP_API_LINK } = process.env;
 
@@ -91,7 +94,7 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-  const { numSelected, handleDelete } = props;
+  const { numSelected, handleDelete, handleEdit } = props;
   return (
     <Toolbar
       sx={[
@@ -120,7 +123,20 @@ function EnhancedTableToolbar(props) {
       ) : (
         <></>
       )}
-      {numSelected > 0 ? (
+      {numSelected === 1 ? (
+        <div style={{ display: "flex" }}>
+          <Tooltip title="Edit">
+            <IconButton onClick={handleEdit}>
+              <ModeEditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton onClick={handleDelete}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ) : numSelected > 1 ? (
         <Tooltip title="Delete">
           <IconButton onClick={handleDelete}>
             <DeleteIcon />
@@ -151,6 +167,8 @@ const QuestionsTable = ({ questions, columns }) => {
   const [deleteAlertError, setDeleteAlertError] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
 
+  const [editDialog, setEditDialog] = useState(false);
+
   useEffect(() => {
     setVisibleRows(
       rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -171,6 +189,27 @@ const QuestionsTable = ({ questions, columns }) => {
     }
     setSelected([]);
   };
+
+  // FEtch the questions again
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get(REACT_APP_API_LINK + "/questions");
+
+      // Turn the options json to a string
+      response.data.forEach((question) => {
+        if (question.options) {
+          question.options = JSON.stringify(question.options);
+        }
+      });
+
+      setRows(response.data);
+      setSelected([]);
+    } catch (err) {
+      console.error("Error fetching questions:", err);
+    }
+  };
+
+  // TODO: Updating of Table after editing a question
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -205,7 +244,6 @@ const QuestionsTable = ({ questions, columns }) => {
       const response = await axios.post(REACT_APP_API_LINK + "/delete", {
         selected,
       });
-      console.log(response);
       setRows(rows.filter((row) => !selected.includes(row.id)));
       setSelected([]);
       setDeleteAlertSuccess(true);
@@ -215,6 +253,14 @@ const QuestionsTable = ({ questions, columns }) => {
       setDeleteAlertError(true);
       setDeleteMessage("Failed to delete question(s)");
     }
+  };
+
+  const handleEdit = () => {
+    setEditDialog(true);
+  };
+
+  const handleEditClose = () => {
+    fetchQuestions();
   };
 
   const handleClose = () => {
@@ -263,9 +309,16 @@ const QuestionsTable = ({ questions, columns }) => {
       )}
 
       <Paper sx={{ width: "100%", mb: 2 }}>
+        <EditDialog
+          open={editDialog}
+          setOpen={setEditDialog}
+          question={questions.find((question) => question.id === selected[0])}
+          onClose={handleEditClose}
+        />
         <EnhancedTableToolbar
           numSelected={selected.length}
           handleDelete={handleDelete}
+          handleEdit={handleEdit}
         />
         <TableContainer>
           <Table
@@ -317,11 +370,11 @@ const QuestionsTable = ({ questions, columns }) => {
                     </TableCell>
                     <TableCell align="left">{row.question_text}</TableCell>
                     <TableCell align="left">{row.question_type}</TableCell>
-                    <TableCell align="left">{row.options}</TableCell>
                     <TableCell align="left">{row.next_question_yes}</TableCell>
                     <TableCell align="left">{row.next_question_no}</TableCell>
                     <TableCell align="left">{row.media_title}</TableCell>
                     <TableCell align="left">{row.url}</TableCell>
+                    <TableCell align="left">{row.options}</TableCell>
                   </TableRow>
                 );
               })}

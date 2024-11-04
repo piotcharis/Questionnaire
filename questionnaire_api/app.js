@@ -254,6 +254,58 @@ app.post("/api/password", async (req, res) => {
   }
 });
 
+// Update question
+app.put("/api/questions/:id", async (req, res) => {
+  var {
+    question_text,
+    question_type,
+    options,
+    next_question_yes,
+    next_question_no,
+    url,
+    media_title,
+  } = req.body;
+
+  if (options === "") {
+    options = null;
+  }
+
+  if (next_question_yes === "") {
+    next_question_yes = null;
+  }
+
+  if (next_question_no === "") {
+    next_question_no = null;
+  }
+
+  if (url === "") {
+    url = null;
+  }
+
+  if (media_title === "") {
+    media_title = null;
+  }
+
+  try {
+    await db.query(
+      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ? WHERE id = ?",
+      [
+        question_text,
+        question_type,
+        options,
+        next_question_yes,
+        next_question_no,
+        url,
+        media_title,
+        req.params.id,
+      ]
+    );
+    res.json({ message: "Question updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating question" + error });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });

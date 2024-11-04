@@ -399,6 +399,7 @@ const Admin = () => {
             value={questionType}
             onChange={(e) => setQuestionType(e.target.value)}
             margin="normal"
+            align="left"
           >
             <MenuItem value="text">Text</MenuItem>
             <MenuItem value="video">Video</MenuItem>

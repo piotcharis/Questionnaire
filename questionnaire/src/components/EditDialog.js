@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -8,12 +7,20 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
+import { MenuItem } from "@mui/material";
 
 const { REACT_APP_API_LINK } = process.env;
 
 export default function FormDialog({ open, setOpen, question }) {
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const [question_type, setQuestion_type] = React.useState("");
+
+  const handleChange = (event) => {
+    console.log(event.target.value);
+    setQuestion_type(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -54,6 +61,25 @@ export default function FormDialog({ open, setOpen, question }) {
   const url = question ? question.url : "";
   const mediaTitle = question ? question.media_title : "";
 
+  const types = [
+    {
+      value: "text",
+      label: "Text",
+    },
+    {
+      value: "video",
+      label: "Video",
+    },
+    {
+      value: "image",
+      label: "Image",
+    },
+    {
+      value: "multiple_choice",
+      label: "Multiple Choice",
+    },
+  ];
+
   return (
     <Dialog
       open={open}
@@ -81,12 +107,19 @@ export default function FormDialog({ open, setOpen, question }) {
         <TextField
           margin="dense"
           id="question_type"
-          name="question_type"
           label="Question Type"
-          type="text"
+          name="question_type"
           defaultValue={questionType}
+          select
           fullWidth
-        />
+          onChange={handleChange}
+        >
+          {types.map((type) => (
+            <MenuItem key={type.value} value={type.value}>
+              {type.label}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           margin="dense"
           id="options"

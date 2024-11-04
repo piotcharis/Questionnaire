@@ -17,6 +17,7 @@ const db = mysql.createPool({
   user: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
+  port: env.DB_PORT,
 });
 
 app.use(cors());
@@ -70,7 +71,7 @@ app.get("/api/questions/:id", async (req, res) => {
     ]);
     res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching questions" });
+    res.status(500).json({ error: "Error fetching questions" + error });
   }
 });
 
@@ -121,10 +122,10 @@ app.post("/api/questions", async (req, res) => {
 // Get all questions
 app.get("/api/questions", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM Questions");
+    const [rows] = await db.query("SELECT * FROM questions");
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching questions" });
+    res.status(500).json({ error: "Error fetching questions " + error });
   }
 });
 

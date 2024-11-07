@@ -13,6 +13,8 @@ import {
   Toolbar,
   Slide,
   CircularProgress,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -51,6 +53,9 @@ const Admin = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imageTitle, setImageTitle] = useState("");
   const [label, setLabel] = useState("");
+  const [other, setOther] = useState(false);
+  const [reason, setReason] = useState(false);
+  const [sectionTitle, setSectionTitle] = useState("");
 
   const [errorText, setErrorText] = useState("");
   const [errorOptions, setErrorOptions] = useState("");
@@ -59,6 +64,7 @@ const Admin = () => {
   const [errorImageTitle, setErrorImageTitle] = useState("");
   const [errorImageFile, setErrorImageFile] = useState("");
   const [errorLabel, setErrorLabel] = useState("");
+  const [errorSectionTitle, setErrorSectionTitle] = useState("");
 
   const [alertError, setAlertError] = useState(false);
   const [alertSuccess, setAlertSuccess] = useState(false);
@@ -173,6 +179,11 @@ const Admin = () => {
       return;
     }
 
+    if (!sectionTitle) {
+      setErrorSectionTitle("Section Title cannot be empty");
+      return;
+    }
+
     if (new_options !== "" && new_options[0] !== "{") {
       // Get the options as an array
       const optionsArray = options
@@ -234,7 +245,10 @@ const Admin = () => {
           next_question_no: nextQuestionNo,
           url: videoFile ? videoFile.name : imageFile ? imageFile.name : null,
           media_title: videoTitle ? videoTitle : imageTitle ? imageTitle : null,
+          other: other,
+          reason: reason,
           label: label ? label : null,
+          section_title: sectionTitle,
         }),
       });
 
@@ -249,6 +263,12 @@ const Admin = () => {
       setNextQuestionNo("");
       setVideoTitle("");
       setVideoFile(null);
+      setImageFile(null);
+      setImageTitle("");
+      setLabel("");
+      setSectionTitle("");
+      setOther(false);
+      setReason(false);
       setErrorText("");
       setErrorOptions("");
       setErrorVideoTitle("");
@@ -256,6 +276,7 @@ const Admin = () => {
       setErrorImageTitle("");
       setErrorImageFile("");
       setErrorLabel("");
+      setErrorSectionTitle("");
 
       setAlertSuccess(true);
       setAlertMessage("Question added successfully");
@@ -337,6 +358,14 @@ const Admin = () => {
       <CircularProgress />
     </Box>
   );
+
+  const handleOtherChange = (event) => {
+    setOther(event.target.checked);
+  };
+
+  const handleReasonChange = (event) => {
+    setReason(event.target.checked);
+  };
 
   return !passwordEntered ? (
     <>
@@ -425,19 +454,57 @@ const Admin = () => {
             <MenuItem value="multiple_select">Multiple Select</MenuItem>
             <MenuItem value="scale">Scale</MenuItem>
           </TextField>
+          <TextField
+            label="Section Title"
+            variant="outlined"
+            fullWidth
+            value={sectionTitle}
+            onChange={(e) => setSectionTitle(e.target.value)}
+            error={!!errorSectionTitle}
+            helperText={errorSectionTitle}
+            required
+          />
           {(questionType === "multiple_choice" ||
             questionType === "multiple_select") && (
-            <TextField
-              label="Options (separated by commas)"
-              variant="outlined"
-              fullWidth
-              value={options}
-              onChange={(e) => setOptions(e.target.value)}
-              margin="normal"
-              error={!!errorOptions}
-              helperText={errorOptions}
-              required
-            />
+            <>
+              <TextField
+                label="Options (separated by commas)"
+                variant="outlined"
+                fullWidth
+                value={options}
+                onChange={(e) => setOptions(e.target.value)}
+                margin="normal"
+                error={!!errorOptions}
+                helperText={errorOptions}
+                required
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={other}
+                    onChange={handleOtherChange}
+                    name="other"
+                  />
+                }
+                label="Other (please specify)"
+                fullWidth
+                margin="normal"
+                align="left"
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={reason}
+                    onChange={handleReasonChange}
+                    name="reason"
+                  />
+                }
+                label="If no, please specify the reason"
+                fullWidth
+                margin="normal"
+                align="left"
+              />
+            </>
           )}
           {(questionType === "video" || questionType === "image") && (
             <TextField

@@ -87,7 +87,6 @@ app.post("/api/questions", async (req, res) => {
     media_title,
     other,
     reason,
-    specify,
     label,
     section_title,
   } = req.body;
@@ -106,7 +105,7 @@ app.post("/api/questions", async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title, other, reason, specify, label, section_title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title, other, reason, label, section_title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         question_text,
         question_type,
@@ -117,7 +116,6 @@ app.post("/api/questions", async (req, res) => {
         media_title,
         other,
         reason,
-        specify,
         label,
         section_title,
       ]
@@ -215,6 +213,8 @@ app.post("/api/previous-question", async (req, res) => {
 app.post("/api/answers", async (req, res) => {
   const { question_id, answer, session_id } = req.body;
 
+  const datetime = new Date().toISOString().slice(0, 19).replace("T", " ");
+
   // Check if there is already an answer for the question with the same session ID
   const [rows] = await db.query(
     "SELECT * FROM responses WHERE question_id = ? AND session_id = ?",
@@ -225,8 +225,8 @@ app.post("/api/answers", async (req, res) => {
     // Update the answer
     try {
       await db.query(
-        "UPDATE responses SET answer = ? WHERE question_id = ? AND session_id = ?",
-        [answer, question_id, session_id]
+        "UPDATE responses SET answer = ?, timestamp = ? WHERE question_id = ? AND session_id = ?",
+        [answer, datetime, question_id, session_id]
       );
       res.json({ message: "Answer updated successfully" });
     } catch (error) {
@@ -235,8 +235,8 @@ app.post("/api/answers", async (req, res) => {
   } else {
     try {
       await db.query(
-        "INSERT INTO responses (question_id, answer, session_id) VALUES (?, ?, ?)",
-        [question_id, answer, session_id]
+        "INSERT INTO responses (question_id, answer, timestamp, session_id) VALUES (?, ?, ?, ?)",
+        [question_id, answer, datetime, session_id]
       );
       res.json({ message: "Answer added successfully" });
     } catch (error) {
@@ -277,7 +277,6 @@ app.put("/api/questions/:id", async (req, res) => {
     media_title,
     other,
     reason,
-    specify,
     label,
     section_title,
   } = req.body;
@@ -308,7 +307,7 @@ app.put("/api/questions/:id", async (req, res) => {
 
   try {
     await db.query(
-      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ?, other = ?, reason = ?, specify = ?, label = ?, section_title = ? WHERE id = ?",
+      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ?, other = ?, reason = ?, label = ?, section_title = ? WHERE id = ?",
       [
         question_text,
         question_type,
@@ -319,7 +318,6 @@ app.put("/api/questions/:id", async (req, res) => {
         media_title,
         other,
         reason,
-        specify,
         label,
         section_title,
         req.params.id,

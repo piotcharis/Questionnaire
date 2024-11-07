@@ -41,7 +41,7 @@ function Main() {
       }
     };
     fetchQuestion();
-  }, [questionId]); // Fetch new question every time the questionId changes
+  }, [questionId, REACT_APP_API_LINK]); // Fetch new question every time the questionId changes
 
   // If the back button of the browser is clicked, pop the last question from the question_order array
   window.onpopstate = function () {
@@ -88,8 +88,6 @@ function Main() {
     // Get the answer from the input field
     const answer = document.getElementById("answer");
 
-    console.log(answer.value);
-
     if (answer === null || answer.value === "") {
       setAnswerError(true);
       return;
@@ -118,6 +116,7 @@ function Main() {
     localStorage.setItem("question_order", JSON.stringify(question_order));
 
     navigate(`/questions/${parseInt(currentQuestion.next_question_yes)}`);
+    // navigate(0);
   };
 
   const handlePrevious = async () => {
@@ -155,7 +154,7 @@ function Main() {
           Please enter an answer
         </Alert>
       </Snackbar>
-      <h1>{currentQuestion.section_title}</h1>
+      <h2>{"Section: " + currentQuestion.section_title}</h2>
       {questionType()}
       <br />
       <Grid

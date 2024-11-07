@@ -129,6 +129,15 @@ const Dashboard = () => {
 
       data[options[j]] = number_of_answers;
     }
+
+    // Any answers that are not in the options add them to the "other" key
+    const other_answers = answers.filter(
+      (answer) =>
+        answer.question_id === question.id && !options.includes(answer.answer)
+    );
+
+    data["other"] = other_answers.length;
+
     return [data];
   };
 

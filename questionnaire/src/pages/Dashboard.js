@@ -95,13 +95,18 @@ const Dashboard = () => {
   const multiple_choice_questions = questions.filter(
     (question) =>
       question.question_type === "multiple_choice" ||
-      (question.question_type === "video" && question.options !== null)
+      (question.question_type === "video" && question.options !== null) ||
+      question.question_type === "multiple_select"
   );
 
   const text_questions = questions.filter(
     (question) =>
       question.question_type === "text" ||
       (question.question_type === "video" && question.options === null)
+  );
+
+  const scale_questions = questions.filter(
+    (question) => question.question_type === "scale"
   );
 
   const getAnswersCount = (question_id, option) => {
@@ -123,6 +128,19 @@ const Dashboard = () => {
       const number_of_answers = getAnswersCount(question.id, options[j]);
 
       data[options[j]] = number_of_answers;
+    }
+    return [data];
+  };
+
+  const prepareDataScale = (question) => {
+    var data = {};
+
+    data.name = question.question_text;
+
+    for (let j = 1; j <= 5; j++) {
+      const number_of_answers = getAnswersCount(question.id, j.toString());
+
+      data[j] = number_of_answers;
     }
     return [data];
   };
@@ -158,6 +176,35 @@ const Dashboard = () => {
             dataset={dataset}
             xAxis={[{ scaleType: "band", dataKey: "name" }]}
             series={options}
+            {...chartSetting}
+          />
+        </Grid>
+      );
+    });
+  };
+
+  const make_charts_scale_questions = () => {
+    return scale_questions.map((question) => {
+      const dataset = prepareDataScale(question);
+      const labels = [
+        { dataKey: "1", label: "1" },
+        { dataKey: "2", label: "2" },
+        { dataKey: "3", label: "3" },
+        { dataKey: "4", label: "4" },
+        { dataKey: "5", label: "5" },
+      ];
+
+      return (
+        <Grid
+          size={4}
+          item
+          key={question.id}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <BarChart
+            dataset={dataset}
+            xAxis={[{ scaleType: "band", dataKey: "name" }]}
+            series={labels}
             {...chartSetting}
           />
         </Grid>
@@ -265,6 +312,14 @@ const Dashboard = () => {
         </Typography>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           {make_charts_text_questions()}
+        </Grid>
+      </Paper>
+      <Paper style={{ padding: 20 }}>
+        <Typography variant="h6" gutterBottom>
+          Scale Questions
+        </Typography>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {make_charts_scale_questions()}
         </Grid>
       </Paper>
     </div>

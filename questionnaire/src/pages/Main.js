@@ -11,6 +11,8 @@ import TextQuestion from "../components/TextQuestion";
 import VideoQuestion from "../components/VideoQuestion";
 import ImageQuestion from "../components/ImageQuestion";
 import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
+import MultipleSelect from "../components/MultipleSelect";
+import ScaleQuestion from "../components/ScaleQuestion";
 import Thanks from "../components/Thanks";
 import Navbar from "../components/Navbar";
 
@@ -75,6 +77,10 @@ function Main() {
       return <ImageQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_choice") {
       return <MultipleChoiceQuestion question={currentQuestion} />;
+    } else if (currentQuestion.question_type === "multiple_select") {
+      return <MultipleSelect question={currentQuestion} />;
+    } else if (currentQuestion.question_type === "scale") {
+      return <ScaleQuestion question={currentQuestion} />;
     }
   }
 
@@ -149,6 +155,7 @@ function Main() {
           Please enter an answer
         </Alert>
       </Snackbar>
+      <h1>{currentQuestion.section_title}</h1>
       {questionType()}
       <br />
       <Grid

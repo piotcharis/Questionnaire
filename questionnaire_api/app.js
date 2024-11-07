@@ -85,6 +85,11 @@ app.post("/api/questions", async (req, res) => {
     next_question_no,
     url,
     media_title,
+    other,
+    reason,
+    specify,
+    label,
+    section_title,
   } = req.body;
 
   if (options === "") {
@@ -101,7 +106,7 @@ app.post("/api/questions", async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title, other, reason, specify, label, section_title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         question_text,
         question_type,
@@ -110,6 +115,11 @@ app.post("/api/questions", async (req, res) => {
         next_question_no,
         url,
         media_title,
+        other,
+        reason,
+        specify,
+        label,
+        section_title,
       ]
     );
     res.json({ message: "Question added successfully" });
@@ -265,6 +275,11 @@ app.put("/api/questions/:id", async (req, res) => {
     next_question_no,
     url,
     media_title,
+    other,
+    reason,
+    specify,
+    label,
+    section_title,
   } = req.body;
 
   if (options === "") {
@@ -287,9 +302,13 @@ app.put("/api/questions/:id", async (req, res) => {
     media_title = null;
   }
 
+  if (label === "") {
+    label = null;
+  }
+
   try {
     await db.query(
-      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ? WHERE id = ?",
+      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ?, other = ?, reason = ?, specify = ?, label = ?, section_title = ? WHERE id = ?",
       [
         question_text,
         question_type,
@@ -298,6 +317,11 @@ app.put("/api/questions/:id", async (req, res) => {
         next_question_no,
         url,
         media_title,
+        other,
+        reason,
+        specify,
+        label,
+        section_title,
         req.params.id,
       ]
     );
@@ -309,6 +333,18 @@ app.put("/api/questions/:id", async (req, res) => {
     res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ error: "Error updating question" + error });
+  }
+});
+
+// Fetch the label for the scale question
+app.get("/api/labels/:id", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT label FROM questions WHERE id = ?", [
+      req.params.id,
+    ]);
+    res.json(rows[0].label);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching the label" });
   }
 });
 

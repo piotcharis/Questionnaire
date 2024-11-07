@@ -50,6 +50,7 @@ const Admin = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imageTitle, setImageTitle] = useState("");
+  const [label, setLabel] = useState("");
 
   const [errorText, setErrorText] = useState("");
   const [errorOptions, setErrorOptions] = useState("");
@@ -57,6 +58,7 @@ const Admin = () => {
   const [errorVideoFile, setErrorVideoFile] = useState("");
   const [errorImageTitle, setErrorImageTitle] = useState("");
   const [errorImageFile, setErrorImageFile] = useState("");
+  const [errorLabel, setErrorLabel] = useState("");
 
   const [alertError, setAlertError] = useState(false);
   const [alertSuccess, setAlertSuccess] = useState(false);
@@ -137,7 +139,11 @@ const Admin = () => {
       return;
     }
 
-    if (questionType === "multiple_choice" && !options) {
+    if (
+      (questionType === "multiple_choice" ||
+        questionType === "multiple_select") &&
+      !options
+    ) {
       setErrorOptions("Options cannot be empty for multiple choice questions");
       return;
     }
@@ -159,6 +165,11 @@ const Admin = () => {
 
     if (questionType === "image" && !imageFile) {
       setErrorImageFile("Image file cannot be empty for image questions");
+      return;
+    }
+
+    if (questionType === "scale" && !label) {
+      setErrorLabel("Label cannot be empty for scale questions");
       return;
     }
 
@@ -196,6 +207,10 @@ const Admin = () => {
       setNextQuestionNo(null);
     }
 
+    if (label === "") {
+      setLabel(null);
+    }
+
     const formData = new FormData();
     if (videoFile) {
       formData.append("videoFile", videoFile);
@@ -219,6 +234,7 @@ const Admin = () => {
           next_question_no: nextQuestionNo,
           url: videoFile ? videoFile.name : imageFile ? imageFile.name : null,
           media_title: videoTitle ? videoTitle : imageTitle ? imageTitle : null,
+          label: label ? label : null,
         }),
       });
 
@@ -239,6 +255,7 @@ const Admin = () => {
       setErrorVideoFile("");
       setErrorImageTitle("");
       setErrorImageFile("");
+      setErrorLabel("");
 
       setAlertSuccess(true);
       setAlertMessage("Question added successfully");
@@ -405,8 +422,11 @@ const Admin = () => {
             <MenuItem value="video">Video</MenuItem>
             <MenuItem value="image">Image</MenuItem>
             <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
+            <MenuItem value="multiple_select">Multiple Select</MenuItem>
+            <MenuItem value="scale">Scale</MenuItem>
           </TextField>
-          {questionType === "multiple_choice" && (
+          {(questionType === "multiple_choice" ||
+            questionType === "multiple_select") && (
             <TextField
               label="Options (separated by commas)"
               variant="outlined"
@@ -427,6 +447,19 @@ const Admin = () => {
               value={options}
               onChange={(e) => setOptions(e.target.value)}
               margin="normal"
+            />
+          )}
+          {questionType === "scale" && (
+            <TextField
+              label="Label"
+              variant="outlined"
+              fullWidth
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              margin="normal"
+              error={!!errorLabel}
+              helperText={errorLabel}
+              required
             />
           )}
           <TextField

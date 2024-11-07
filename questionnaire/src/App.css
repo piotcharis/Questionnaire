@@ -41,7 +41,7 @@
 
 .outer-container {
   width: 100vw;
-  height: 70rem;
+  min-height: 60vh;
   display: flex;
   justify-content: center;
 }

@@ -34,6 +34,11 @@ function Navbar(props) {
               Dashboard
             </Button>
           )}
+          {(props.page === "admin" || props.page === "dashboard") && (
+            <Button color="inherit" href="/">
+              Start Survey
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

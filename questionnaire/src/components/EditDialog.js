@@ -60,6 +60,7 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
   const nextQuestionNo = question ? question.next_question_no : "";
   const url = question ? question.url : "";
   const mediaTitle = question ? question.media_title : "";
+  const label = question ? question.label : "";
 
   const types = [
     {
@@ -77,6 +78,14 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
     {
       value: "multiple_choice",
       label: "Multiple Choice",
+    },
+    {
+      value: "multiple_select",
+      label: "Multiple Select",
+    },
+    {
+      value: "scale",
+      label: "Scale",
     },
   ];
 
@@ -163,6 +172,15 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
           label="Media Title"
           type="text"
           defaultValue={mediaTitle}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="label"
+          name="label"
+          label="Label"
+          type="text"
+          defaultValue={label}
           fullWidth
         />
       </DialogContent>

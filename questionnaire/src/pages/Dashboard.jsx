@@ -14,7 +14,7 @@ import axios from "axios";
 
 import Navbar from "../components/Navbar";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 const chartSetting = {
   yAxis: [
@@ -65,7 +65,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(REACT_APP_API_LINK + "/questions");
+        const response = await axios.get(VITE_API_LINK + "/questions");
         setQuestions(response.data);
       } catch (error) {
         console.error("Error fetching the questions:", error);
@@ -77,7 +77,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAnswers = async () => {
       try {
-        const response = await axios.get(REACT_APP_API_LINK + "/answers");
+        const response = await axios.get(VITE_API_LINK + "/answers");
         setAnswers(response.data);
         setLoading(false);
       } catch (error) {

@@ -12,7 +12,7 @@ import FormControl from "@mui/material/FormControl";
 import { CircularProgress, TextField } from "@mui/material";
 import axios from "axios";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 const VideoQuestion = ({ question }) => {
   const [videoFile, setVideoFile] = useState(null);
@@ -23,7 +23,7 @@ const VideoQuestion = ({ question }) => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
-          REACT_APP_API_LINK + `/videos/${question.url}`,
+          VITE_API_LINK + `/videos/${question.url}`,
           {
             responseType: "blob",
           }

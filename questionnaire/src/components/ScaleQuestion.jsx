@@ -6,7 +6,7 @@ import StarIcon from "@mui/icons-material/Star";
 import Box from "@mui/material/Box";
 import axios from "axios";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 const ScaleQuestion = ({ question }) => {
   const [value, setValue] = React.useState(0);
@@ -18,7 +18,7 @@ const ScaleQuestion = ({ question }) => {
     const fetchKeyword = async () => {
       try {
         const response = await axios.get(
-          REACT_APP_API_LINK + `/labels/${question.id}`
+          VITE_API_LINK + `/labels/${question.id}`
         );
         setLabel(response.data);
       } catch (error) {

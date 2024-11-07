@@ -26,13 +26,13 @@ function Main() {
 
   const navigate = useNavigate(); // For programmatic navigation
 
-  const { REACT_APP_API_LINK } = process.env;
+  const { VITE_API_LINK } = import.meta.env;
 
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
         const response = await axios.get(
-          REACT_APP_API_LINK + `/questions/${questionId}`
+          VITE_API_LINK + `/questions/${questionId}`
         );
         setCurrentQuestion(response.data);
         setLoading(false);
@@ -41,7 +41,7 @@ function Main() {
       }
     };
     fetchQuestion();
-  }, [questionId, REACT_APP_API_LINK]); // Fetch new question every time the questionId changes
+  }, [questionId, VITE_API_LINK]); // Fetch new question every time the questionId changes
 
   // If the back button of the browser is clicked, pop the last question from the question_order array
   window.onpopstate = function () {
@@ -94,7 +94,7 @@ function Main() {
     }
 
     // Send the answer to the server
-    await axios.post(REACT_APP_API_LINK + "/answers", {
+    await axios.post(VITE_API_LINK + "/answers", {
       question_id: currentQuestion.id,
       answer: answer.value,
       session_id: localStorage.getItem("session_id"),

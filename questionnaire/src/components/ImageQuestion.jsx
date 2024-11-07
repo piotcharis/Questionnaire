@@ -12,7 +12,7 @@ import FormControl from "@mui/material/FormControl";
 import { TextField } from "@mui/material";
 import axios from "axios";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 const ImageQuestion = ({ question }) => {
   const [imageFile, setImageFile] = useState(null);
@@ -21,7 +21,7 @@ const ImageQuestion = ({ question }) => {
   // get the video file
   useEffect(() => {
     axios
-      .get(REACT_APP_API_LINK + `/images/${question.url}`, {
+      .get(VITE_API_LINK + `/images/${question.url}`, {
         responseType: "blob",
       })
       .then((response) => {

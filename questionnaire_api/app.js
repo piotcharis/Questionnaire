@@ -1,11 +1,11 @@
-const express = require("express");
-const mysql = require("mysql2/promise"); // For Promises support
-const multer = require("multer"); // Import the multer package
-const path = require("path"); // Import the path package
+import express from "express";
+import mysql from "mysql2/promise"; // For Promises support
+import multer from "multer"; // Import the multer package
+import path from "path"; // Import the path package
+import cors from "cors"; // Import the cors package
+import dotenv from "dotenv"; // Import dotenv for environment variables
 
-const cors = require("cors"); // Import the cors package
-
-require("dotenv").config();
+dotenv.config();
 
 const env = process.env;
 
@@ -303,6 +303,14 @@ app.put("/api/questions/:id", async (req, res) => {
 
   if (label === "") {
     label = null;
+  }
+
+  if (other === "") {
+    other = 0;
+  }
+
+  if (reason === "") {
+    reason = 0;
   }
 
   try {

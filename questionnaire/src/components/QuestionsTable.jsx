@@ -27,7 +27,7 @@ import {
 
 import EditDialog from "./EditDialog";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 function EnhancedTableHead(props) {
   const {
@@ -193,7 +193,7 @@ const QuestionsTable = ({ questions, columns }) => {
   // FEtch the questions again
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get(REACT_APP_API_LINK + "/questions");
+      const response = await axios.get(VITE_API_LINK + "/questions");
 
       // Turn the options json to a string
       response.data.forEach((question) => {
@@ -208,8 +208,6 @@ const QuestionsTable = ({ questions, columns }) => {
       console.error("Error fetching questions:", err);
     }
   };
-
-  // TODO: Updating of Table after editing a question
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -241,7 +239,7 @@ const QuestionsTable = ({ questions, columns }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.post(REACT_APP_API_LINK + "/delete", {
+      const response = await axios.post(VITE_API_LINK + "/delete", {
         selected,
       });
       setRows(rows.filter((row) => !selected.includes(row.id)));
@@ -377,6 +375,10 @@ const QuestionsTable = ({ questions, columns }) => {
                     <TableCell align="left">{row.media_title}</TableCell>
                     <TableCell align="left">{row.url}</TableCell>
                     <TableCell align="left">{row.options}</TableCell>
+                    <TableCell align="left">{row.other}</TableCell>
+                    <TableCell align="left">{row.reason}</TableCell>
+                    <TableCell align="left">{row.label}</TableCell>
+                    <TableCell align="left">{row.section_title}</TableCell>
                   </TableRow>
                 );
               })}

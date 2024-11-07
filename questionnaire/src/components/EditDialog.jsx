@@ -10,7 +10,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import { MenuItem } from "@mui/material";
 
-const { REACT_APP_API_LINK } = process.env;
+const { VITE_API_LINK } = import.meta.env;
 
 export default function FormDialog({ open, setOpen, question, onClose }) {
   const handleClose = () => {
@@ -46,7 +46,7 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
     const formJson = Object.fromEntries(formData.entries());
 
     axios
-      .put(REACT_APP_API_LINK + `/questions/${question.id}`, formJson)
+      .put(VITE_API_LINK + `/questions/${question.id}`, formJson)
       .then((response) => {
         onClose(response.data);
         setOpen(false);
@@ -61,6 +61,9 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
   const url = question ? question.url : "";
   const mediaTitle = question ? question.media_title : "";
   const label = question ? question.label : "";
+  const other = question ? question.other : "";
+  const reason = question ? question.reason : "";
+  const sectionTitle = question ? question.section_title : "";
 
   const types = [
     {
@@ -181,6 +184,33 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
           label="Label"
           type="text"
           defaultValue={label}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="other"
+          name="other"
+          label="Other"
+          type="text"
+          defaultValue={other}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="reason"
+          name="reason"
+          label="Reason"
+          type="text"
+          defaultValue={reason}
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="section_title"
+          name="section_title"
+          label="Section Title"
+          type="text"
+          defaultValue={sectionTitle}
           fullWidth
         />
       </DialogContent>

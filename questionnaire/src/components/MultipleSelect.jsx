@@ -9,7 +9,7 @@ import TextField from "@mui/material/TextField";
 const MultipleSelect = ({ question }) => {
   const [options, setOptions] = React.useState([]);
   const [selectedValues, setSelectedValues] = React.useState([]);
-  const [answer, setAnswer] = React.useState("");
+  const [otherText, setOtherText] = React.useState("");
 
   React.useEffect(() => {
     // Load options from the question prop
@@ -19,78 +19,51 @@ const MultipleSelect = ({ question }) => {
 
   const handleCheckboxChange = (event) => {
     const value = event.target.value;
-    const tempSelectedValues = selectedValues;
+    let updatedSelectedValues = [...selectedValues];
 
-    if (value === "other") {
-      setAnswer(tempSelectedValues.join(","));
-      tempSelectedValues.push("other");
-      setSelectedValues(tempSelectedValues);
-      return;
-    }
-
-    if (tempSelectedValues.includes(value)) {
-      tempSelectedValues.splice(tempSelectedValues.indexOf(value), 1);
+    if (updatedSelectedValues.includes(value)) {
+      updatedSelectedValues = updatedSelectedValues.filter(
+        (item) => item !== value
+      );
     } else {
-      tempSelectedValues.push(value);
+      updatedSelectedValues.push(value);
     }
 
-    setAnswer(tempSelectedValues.join(","));
-    setSelectedValues(tempSelectedValues);
+    setSelectedValues(updatedSelectedValues);
   };
 
-  const handleCheckboxChangeOther = (event) => {
-    const tempSelectedValues = selectedValues.filter(
-      (item) => item !== "other"
-    );
+  const handleOtherTextChange = (event) => {
+    setOtherText(event.target.value);
+  };
 
-    if (tempSelectedValues.length > 0) {
-      setAnswer(tempSelectedValues.join(",") + "," + event.target.value);
-    } else {
-      setAnswer(event.target.value);
+  // Update answer field including "other" text if applicable
+  const getAnswer = () => {
+    let finalAnswer = selectedValues.filter((value) => value !== "other");
+    if (selectedValues.includes("other") && otherText.trim() !== "") {
+      finalAnswer.push(otherText.trim());
     }
+    return finalAnswer.join(",");
   };
 
   function renderOptions() {
-    var html = [];
-
-    html.push(
-      options.map((option) => (
-        <FormControlLabel
-          key={option}
-          control={
-            <Checkbox
-              value={option}
-              checked={selectedValues.includes(option)}
-              onChange={handleCheckboxChange}
-            />
-          }
-          label={option}
-        />
-      ))
-    );
-
-    if (question.other) {
-      html.push(
-        <FormControlLabel
-          value="other"
-          control={
-            <Checkbox
-              checked={selectedValues.includes("other")}
-              onChange={handleCheckboxChange}
-              value={"other"}
-            />
-          }
-          label="Other"
-        />
-      );
-    }
-
-    return html;
+    return options.map((option) => (
+      <FormControlLabel
+        key={option}
+        control={
+          <Checkbox
+            value={option}
+            checked={selectedValues.includes(option)}
+            onChange={handleCheckboxChange}
+          />
+        }
+        label={option}
+      />
+    ));
   }
 
   return (
     <Container className="outer-container">
-      <Stack spacing={2}>
+      <Stack spacing={2} style={{ alignItems: "center" }}>
         <label
           htmlFor="answer"
           style={{ marginBottom: 50, fontSize: 25, marginTop: 50 }}
@@ -99,18 +72,31 @@ const MultipleSelect = ({ question }) => {
         </label>
         <FormControl style={{ width: "40vw" }}>
           {renderOptions()}
+          {question.other && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedValues.includes("other")}
+                  onChange={handleCheckboxChange}
+                  value="other"
+                />
+              }
+              label="Other"
+            />
+          )}
           {selectedValues.includes("other") && (
             <TextField
               id="other"
               variant="outlined"
               label="Please specify"
               style={{ marginTop: "8vh" }}
-              onChange={handleCheckboxChangeOther}
+              value={otherText}
+              onChange={handleOtherTextChange}
             />
           )}
         </FormControl>
       </Stack>
-      <input type="hidden" id="answer" value={answer} />
+      <input type="hidden" id="answer" value={getAnswer()} />
     </Container>
   );
 };

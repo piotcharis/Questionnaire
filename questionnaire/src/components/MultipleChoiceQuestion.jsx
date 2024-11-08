@@ -53,7 +53,7 @@ const MultipleChoiceQuestion = ({ question }) => {
 
   return (
     <Container className="outer-container">
-      <Stack spacing={2}>
+      <Stack spacing={2} style={{ alignItems: "center" }}>
         <label
           htmlFor="answer"
           style={{ marginBottom: 50, fontSize: 25, marginTop: 50 }}

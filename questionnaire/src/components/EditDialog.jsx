@@ -56,7 +56,6 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
 
   const questionText = question ? question.question_text : "";
   const questionType = question ? question.question_type : "";
-  const options = question ? question.options : "";
   const nextQuestionYes = question ? question.next_question_yes : "";
   const nextQuestionNo = question ? question.next_question_no : "";
   const url = question ? question.url : "";
@@ -66,6 +65,18 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
   const reason = question ? question.reason : "";
   const sectionTitle = question ? question.section_title : "";
   const media = question ? question.media : "";
+  let options = question ? question.options : null;
+
+  // if (options !== null && options !== "") {
+  //   try {
+  //     // Remove the options key from the string
+  //     options = JSON.parse(options);
+  //     options = JSON.parse(options);
+  //     options = options.options.join(", ");
+  //   } catch (e) {
+  //     console.error("Error parsing JSON:", e);
+  //   }
+  // }
 
   const types = [
     {

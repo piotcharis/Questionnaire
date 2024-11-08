@@ -30,7 +30,7 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     // Fetch the label
     $row = $result->fetch_assoc();
-    echo json_encode(["label" => $row['label']]);
+    echo json_encode($row['label']);
 } else {
     // If no question was found for the given ID
     header("HTTP/1.1 404 Not Found");

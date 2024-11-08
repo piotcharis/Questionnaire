@@ -198,7 +198,8 @@ const QuestionsTable = ({ questions, columns }) => {
       // Turn the options json to a string
       response.data.forEach((question) => {
         if (question.options) {
-          question.options = JSON.stringify(question.options);
+          question.options = JSON.parse(question.options);
+          question.options = question.options.options.join(", ");
         }
       });
 

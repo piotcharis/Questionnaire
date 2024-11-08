@@ -27,12 +27,10 @@ const chartSetting = {
   height: 350,
   sx: {
     [`.${axisClasses.left}`]: {
-      // Increase the space for the y-axis labels
-      paddingLeft: "50px", // Adjust this value as needed
+      paddingLeft: "50px",
     },
     [`.${axisClasses.left} .${axisClasses.label}`]: {
-      // Adjust the transform so the label is not shifted out of view
-      transform: "translate(-10px, 0)", // Reduce the translation
+      transform: "translate(-10px, 0)",
     },
   },
 };
@@ -66,6 +64,14 @@ const Dashboard = () => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(VITE_API_LINK + "/get_questions.php");
+
+        // Turn the options string into a JSON object
+        response.data.forEach((question) => {
+          if (question.options !== null) {
+            question.options = JSON.parse(question.options);
+          }
+        });
+
         setQuestions(response.data);
       } catch (error) {
         console.error("Error fetching the questions:", error);
@@ -78,6 +84,13 @@ const Dashboard = () => {
     const fetchAnswers = async () => {
       try {
         const response = await axios.get(VITE_API_LINK + "/get_answers.php");
+
+        // If there are multiple answers for a question, they are separated by a comma
+        // Turn the answers string into an array
+        response.data.forEach((answer) => {
+          answer.answer = answer.answer.split(",");
+        });
+
         setAnswers(response.data);
         setLoading(false);
       } catch (error) {
@@ -108,7 +121,8 @@ const Dashboard = () => {
 
   const getAnswersCount = (question_id, option) => {
     const filtered_answers = answers.filter(
-      (answer) => answer.question_id === question_id && answer.answer === option
+      (answer) =>
+        answer.question_id === question_id && answer.answer.includes(option)
     );
 
     return filtered_answers.length;
@@ -182,6 +196,7 @@ const Dashboard = () => {
             dataset={dataset}
             xAxis={[{ scaleType: "band", dataKey: "name" }]}
             series={options}
+            slotProps={{ legend: { hidden: true } }}
             {...chartSetting}
           />
         </Grid>
@@ -211,6 +226,7 @@ const Dashboard = () => {
             dataset={dataset}
             xAxis={[{ scaleType: "band", dataKey: "name" }]}
             series={labels}
+            slotProps={{ legend: { hidden: true } }}
             {...chartSetting}
           />
         </Grid>

@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 
 const unique_id = Math.random().toString(36);
 localStorage.setItem("session_id", unique_id);
+localStorage.setItem("question_order", JSON.stringify([]));
 
 function App() {
   return (

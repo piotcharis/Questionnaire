@@ -90,7 +90,7 @@ function Main() {
     }
 
     // Send the answer to the server
-    await axios.post(VITE_API_LINK + "/get_answers.php", {
+    await axios.post(VITE_API_LINK + "/add_answer.php", {
       question_id: currentQuestion.id,
       answer: answer.value,
       session_id: localStorage.getItem("session_id"),
@@ -112,7 +112,6 @@ function Main() {
     localStorage.setItem("question_order", JSON.stringify(question_order));
 
     navigate(`/questions/${parseInt(currentQuestion.next_question_yes)}`);
-    // navigate(0);
   };
 
   const handlePrevious = async () => {

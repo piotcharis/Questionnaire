@@ -10,5 +10,8 @@ $result = $stmt->get_result();
 
 header("Content-Type: application/json"); // Set the response type to JSON
 
-echo json_encode($result->fetch_assoc());
+$data = $result->fetch_assoc();
+$data['options'] = json_decode($data['options']);
+
+echo json_encode($data);
 ?>

@@ -82,6 +82,8 @@ const Admin = () => {
 
   const [passwordEntered, setPasswordEntered] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     getQuestions();
   }, []);
@@ -111,7 +113,8 @@ const Admin = () => {
       // Turn the options json to a string
       response.data.forEach((question) => {
         if (question.options) {
-          question.options = JSON.stringify(question.options);
+          question.options = JSON.parse(question.options);
+          question.options = question.options.options.join(", ");
         }
       });
 
@@ -157,22 +160,22 @@ const Admin = () => {
       return;
     }
 
-    if (questionType === "video" && !videoTitle) {
+    if (media === "video" && !videoTitle) {
       setErrorVideoTitle("Video Title cannot be empty for video questions");
       return;
     }
 
-    if (questionType === "video" && !videoFile) {
+    if (media === "video" && !videoFile) {
       setErrorVideoFile("Video file cannot be empty for video questions");
       return;
     }
 
-    if (questionType === "image" && !imageTitle) {
+    if (media === "image" && !imageTitle) {
       setErrorImageTitle("Image Title cannot be empty for image questions");
       return;
     }
 
-    if (questionType === "image" && !imageFile) {
+    if (media === "image" && !imageFile) {
       setErrorImageFile("Image file cannot be empty for image questions");
       return;
     }
@@ -186,6 +189,8 @@ const Admin = () => {
       setErrorSectionTitle("Section Title cannot be empty");
       return;
     }
+
+    setLoading(true);
 
     if (new_options !== "" && new_options[0] !== "{") {
       // Get the options as an array
@@ -287,7 +292,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch(VITE_API_LINK + "/get_questions.php", {
+      const response = await fetch(VITE_API_LINK + "/add_question.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -344,6 +349,8 @@ const Admin = () => {
     }
 
     getQuestions(); // Fetch the questions again to update the list
+
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -377,6 +384,14 @@ const Admin = () => {
   const handleReasonChange = (event) => {
     setReason(event.target.checked);
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return !passwordEntered ? (
     <>

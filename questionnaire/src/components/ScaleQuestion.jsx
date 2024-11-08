@@ -18,7 +18,7 @@ const ScaleQuestion = ({ question }) => {
     const fetchKeyword = async () => {
       try {
         const response = await axios.get(
-          VITE_API_LINK + `get_label.php?id=${question.id}`
+          VITE_API_LINK + `/get_label.php?id=${question.id}`
         );
         setLabel(response.data);
       } catch (error) {
@@ -42,7 +42,7 @@ const ScaleQuestion = ({ question }) => {
 
   return (
     <Container className="outer-container">
-      <Stack spacing={2}>
+      <Stack spacing={2} style={{ alignItems: "center" }}>
         <label
           htmlFor="answer"
           style={{ marginBottom: 50, fontSize: 25, marginTop: 50 }}
@@ -66,7 +66,7 @@ const ScaleQuestion = ({ question }) => {
           <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
         )}
       </Stack>
-      <input type="hidden" id="answer" value={value} />
+      <input type="hidden" id="answer" value={value === 0 ? null : value} />
     </Container>
   );
 };

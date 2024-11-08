@@ -10,7 +10,7 @@ $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("ssssssssssss", 
     $data['question_text'], 
     $data['question_type'], 
-    $data['options'], 
+    $data['options'],
     $data['next_question_yes'], 
     $data['next_question_no'], 
     $data['url'], 

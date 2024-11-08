@@ -41,7 +41,7 @@ jobs:
         with:
           server: piotopoulos.com
           username: u698006961.piotopoulos.com
-          password: ${{ secrets.FTP_SECRET }}
+          password: ${{ secrets.FTP_PASSWORD}}
           local-dir: build/ # Local build directory
           server-dir: /public_html/ # Target directory on server
 
@@ -51,6 +51,6 @@ jobs:
         with:
           server: piotopoulos.com
           username: u698006961.piotopoulos.com
-          password: ${{ secrets.FTP_SECRET }}
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: api/ # Local API directory
           server-dir: /public_html/api/ # Target directory on server

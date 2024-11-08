@@ -1,0 +1,56 @@
+name: 🚀 Deploy website and API on push
+
+on:
+  push:
+    branches:
+      - main # Trigger the workflow on push to the main branch
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy Website and API
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      # Step 3: Install dependencies and build the website
+      - name: 🔨 Build Project
+        run: |
+          yarn install
+          yarn build
+
+      # Step 4: List output files (optional for debugging)
+      - name: List output files
+        run: find build/
+
+      # Step 5: List API files (optional for debugging)
+      - name: List API files
+        run: find api/
+
+      # Step 6: Deploy the website build to the server
+      - name: 📂 Deploy website
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: piotopoulos.com
+          username: u698006961.piotopoulos.com
+          password: ${{ secrets.FTP_SECRET }}
+          local-dir: build/ # Local build directory
+          server-dir: /public_html/ # Target directory on server
+
+      # Step 7: Deploy the API folder to the server
+      - name: 📂 Deploy API
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: piotopoulos.com
+          username: u698006961.piotopoulos.com
+          password: ${{ secrets.FTP_SECRET }}
+          local-dir: api/ # Local API directory
+          server-dir: /public_html/api/ # Target directory on server

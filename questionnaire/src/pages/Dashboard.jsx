@@ -95,14 +95,11 @@ const Dashboard = () => {
   const multiple_choice_questions = questions.filter(
     (question) =>
       question.question_type === "multiple_choice" ||
-      (question.question_type === "video" && question.options !== null) ||
       question.question_type === "multiple_select"
   );
 
   const text_questions = questions.filter(
-    (question) =>
-      question.question_type === "text" ||
-      (question.question_type === "video" && question.options === null)
+    (question) => question.question_type === "text"
   );
 
   const scale_questions = questions.filter(
@@ -317,18 +314,18 @@ const Dashboard = () => {
       </Paper>
       <Paper style={{ padding: 20 }}>
         <Typography variant="h6" gutterBottom>
-          Text Questions
-        </Typography>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          {make_charts_text_questions()}
-        </Grid>
-      </Paper>
-      <Paper style={{ padding: 20 }}>
-        <Typography variant="h6" gutterBottom>
           Scale Questions
         </Typography>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           {make_charts_scale_questions()}
+        </Grid>
+      </Paper>
+      <Paper style={{ padding: 20 }}>
+        <Typography variant="h6" gutterBottom>
+          Text Questions
+        </Typography>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {make_charts_text_questions()}
         </Grid>
       </Paper>
     </div>

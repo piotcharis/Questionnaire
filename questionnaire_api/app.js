@@ -4,6 +4,11 @@ import multer from "multer"; // Import the multer package
 import path from "path"; // Import the path package
 import cors from "cors"; // Import the cors package
 import dotenv from "dotenv"; // Import dotenv for environment variables
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 dotenv.config();
 
@@ -89,6 +94,7 @@ app.post("/api/questions", async (req, res) => {
     reason,
     label,
     section_title,
+    media,
   } = req.body;
 
   if (options === "") {
@@ -105,7 +111,7 @@ app.post("/api/questions", async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title, other, reason, label, section_title) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO questions (question_text, question_type, options, next_question_yes, next_question_no, url, media_title, other, reason, label, section_title, media) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         question_text,
         question_type,
@@ -118,6 +124,7 @@ app.post("/api/questions", async (req, res) => {
         reason,
         label,
         section_title,
+        media,
       ]
     );
     res.json({ message: "Question added successfully" });
@@ -154,6 +161,7 @@ app.post("/api/video_upload", video_upload.single("videoFile"), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
+    res.json({ message: "Video uploaded successfully" });
   } catch (error) {
     res.status(500).json({ error: "Error uploading video" });
   }
@@ -171,6 +179,7 @@ app.post("/api/image_upload", image_upload.single("imageFile"), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
+    res.json({ message: "Image uploaded successfully" });
   } catch (error) {
     res.status(500).json({ error: "Error uploading image" });
   }
@@ -279,6 +288,7 @@ app.put("/api/questions/:id", async (req, res) => {
     reason,
     label,
     section_title,
+    media,
   } = req.body;
 
   if (options === "") {
@@ -313,9 +323,13 @@ app.put("/api/questions/:id", async (req, res) => {
     reason = 0;
   }
 
+  if (media === "none") {
+    media = null;
+  }
+
   try {
     await db.query(
-      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ?, other = ?, reason = ?, label = ?, section_title = ? WHERE id = ?",
+      "UPDATE questions SET question_text = ?, question_type = ?, options = ?, next_question_yes = ?, next_question_no = ?, url = ?, media_title = ?, other = ?, reason = ?, label = ?, section_title = ?, media = ? WHERE id = ?",
       [
         question_text,
         question_type,
@@ -328,6 +342,7 @@ app.put("/api/questions/:id", async (req, res) => {
         reason,
         label,
         section_title,
+        media,
         req.params.id,
       ]
     );

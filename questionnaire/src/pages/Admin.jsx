@@ -56,6 +56,7 @@ const Admin = () => {
   const [other, setOther] = useState(false);
   const [reason, setReason] = useState(false);
   const [sectionTitle, setSectionTitle] = useState("");
+  const [media, setMedia] = useState("none");
 
   const [errorText, setErrorText] = useState("");
   const [errorOptions, setErrorOptions] = useState("");
@@ -231,6 +232,58 @@ const Admin = () => {
       formData.append("imageFile", imageFile);
     }
 
+    if (media === "none") {
+      setMedia("");
+    }
+
+    if (videoFile) {
+      // Send the video file separately
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/video_upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to upload video file");
+        }
+      } catch (err) {
+        console.error("Error uploading video file:", err);
+        setAlertError(true);
+        setAlertMessage("Failed to upload video file");
+        return;
+      }
+    }
+
+    if (imageFile) {
+      // Send the image file separately
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/image_upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to upload image file");
+        }
+      } catch (err) {
+        console.error("Error uploading image file:", err);
+        setAlertError(true);
+        setAlertMessage("Failed to upload image file");
+        return;
+      }
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/questions", {
         method: "POST",
@@ -249,6 +302,7 @@ const Admin = () => {
           reason: reason,
           label: label ? label : null,
           section_title: sectionTitle,
+          media: media ? media : null,
         }),
       });
 
@@ -267,6 +321,7 @@ const Admin = () => {
       setImageTitle("");
       setLabel("");
       setSectionTitle("");
+      setMedia("");
       setOther(false);
       setReason(false);
       setErrorText("");
@@ -287,52 +342,6 @@ const Admin = () => {
     }
 
     getQuestions(); // Fetch the questions again to update the list
-
-    if (videoFile) {
-      // Send the video file separately
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/api/video_upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to upload video file");
-        }
-      } catch (err) {
-        console.error("Error uploading video file:", err);
-        setAlertError(true);
-        setAlertMessage("Failed to upload video file");
-      }
-    }
-
-    if (imageFile) {
-      // Send the image file separately
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/api/image_upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to upload image file");
-        }
-      } catch (err) {
-        console.error("Error uploading image file:", err);
-        setAlertError(true);
-        setAlertMessage("Failed to upload image file");
-      }
-    }
   };
 
   const handleClose = () => {
@@ -388,7 +397,7 @@ const Admin = () => {
   ) : (
     <div className="App">
       <Navbar page={"admin"} />
-      <Container maxWidth="sm">
+      <Container maxWidth="sm" className="outer-container">
         {alertError && (
           <Snackbar
             autoHideDuration={2000}
@@ -447,12 +456,38 @@ const Admin = () => {
             margin="normal"
             align="left"
           >
-            <MenuItem value="text">Text</MenuItem>
-            <MenuItem value="video">Video</MenuItem>
-            <MenuItem value="image">Image</MenuItem>
-            <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
-            <MenuItem value="multiple_select">Multiple Select</MenuItem>
-            <MenuItem value="scale">Scale</MenuItem>
+            <MenuItem key="text" value="text">
+              Text
+            </MenuItem>
+            <MenuItem key="multiple_choice" value="multiple_choice">
+              Multiple Choice
+            </MenuItem>
+            <MenuItem key="multiple_select" value="multiple_select">
+              Multiple Select
+            </MenuItem>
+            <MenuItem key="scale" value="scale">
+              Scale
+            </MenuItem>
+          </TextField>
+          <TextField
+            label="Media Type"
+            variant="outlined"
+            fullWidth
+            select
+            value={media}
+            onChange={(e) => setMedia(e.target.value)}
+            margin="normal"
+            align="left"
+          >
+            <MenuItem key="none" value="none">
+              None
+            </MenuItem>
+            <MenuItem key="none" value="video">
+              Video
+            </MenuItem>
+            <MenuItem key="none" value="image">
+              Image
+            </MenuItem>
           </TextField>
           <TextField
             label="Section Title"
@@ -462,6 +497,7 @@ const Admin = () => {
             onChange={(e) => setSectionTitle(e.target.value)}
             error={!!errorSectionTitle}
             helperText={errorSectionTitle}
+            margin="normal"
             required
           />
           {(questionType === "multiple_choice" ||
@@ -506,16 +542,6 @@ const Admin = () => {
               />
             </>
           )}
-          {(questionType === "video" || questionType === "image") && (
-            <TextField
-              label="Options (separated by commas)"
-              variant="outlined"
-              fullWidth
-              value={options}
-              onChange={(e) => setOptions(e.target.value)}
-              margin="normal"
-            />
-          )}
           {questionType === "scale" && (
             <TextField
               label="Label"
@@ -545,7 +571,7 @@ const Admin = () => {
             onChange={(e) => setNextQuestionNo(e.target.value)}
             margin="normal"
           />
-          {questionType === "video" && (
+          {media === "video" && (
             <>
               <TextField
                 label="Video Title"
@@ -587,7 +613,7 @@ const Admin = () => {
               />
             </>
           )}
-          {questionType === "image" && (
+          {media === "image" && (
             <>
               <TextField
                 label="Image Title"
@@ -631,7 +657,11 @@ const Admin = () => {
           )}
           <Box
             mt={2}
-            style={{ display: "flex", justifyContent: "space-between" }}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 50,
+            }}
           >
             <Button
               variant="contained"

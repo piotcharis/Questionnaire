@@ -18,6 +18,7 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
   };
 
   const [question_type, setQuestion_type] = React.useState("");
+  const [mediaType, setMediaType] = React.useState("");
 
   const handleChange = (event) => {
     setQuestion_type(event.target.value);
@@ -64,19 +65,12 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
   const other = question ? question.other : "";
   const reason = question ? question.reason : "";
   const sectionTitle = question ? question.section_title : "";
+  const media = question ? question.media : "";
 
   const types = [
     {
       value: "text",
       label: "Text",
-    },
-    {
-      value: "video",
-      label: "Video",
-    },
-    {
-      value: "image",
-      label: "Image",
     },
     {
       value: "multiple_choice",
@@ -91,6 +85,10 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
       label: "Scale",
     },
   ];
+
+  const handleMediaChange = (event) => {
+    setMediaType(event.target.value);
+  };
 
   return (
     <Dialog
@@ -131,6 +129,26 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
               {type.label}
             </MenuItem>
           ))}
+        </TextField>
+        <TextField
+          margin="dense"
+          id="media"
+          label="Media Type"
+          name="media"
+          defaultValue={media ? media : ""}
+          select
+          fullWidth
+          onChange={handleMediaChange}
+        >
+          <MenuItem key="none" value="none">
+            None
+          </MenuItem>
+          <MenuItem key="video" value="video">
+            Video
+          </MenuItem>
+          <MenuItem key="image" value="image">
+            Image
+          </MenuItem>
         </TextField>
         <TextField
           margin="dense"

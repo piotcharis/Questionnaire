@@ -8,13 +8,13 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
 import TextQuestion from "../components/TextQuestion";
-import VideoQuestion from "../components/VideoQuestion";
-import ImageQuestion from "../components/ImageQuestion";
 import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
 import MultipleSelect from "../components/MultipleSelect";
 import ScaleQuestion from "../components/ScaleQuestion";
 import Thanks from "../components/Thanks";
 import Navbar from "../components/Navbar";
+import Video from "../components/Video";
+import Image from "../components/Image";
 
 function Main() {
   const { questionId } = useParams(); // Get the question id from the URL
@@ -71,10 +71,6 @@ function Main() {
   function questionType() {
     if (currentQuestion.question_type === "text") {
       return <TextQuestion question={currentQuestion} />;
-    } else if (currentQuestion.question_type === "video") {
-      return <VideoQuestion question={currentQuestion} />;
-    } else if (currentQuestion.question_type === "image") {
-      return <ImageQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_choice") {
       return <MultipleChoiceQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_select") {
@@ -155,6 +151,12 @@ function Main() {
         </Alert>
       </Snackbar>
       <h2>{"Section: " + currentQuestion.section_title}</h2>
+      {currentQuestion.media === "image" ? (
+        <Image question={currentQuestion} />
+      ) : null}
+      {currentQuestion.media === "video" ? (
+        <Video question={currentQuestion} />
+      ) : null}
       {questionType()}
       <br />
       <Grid

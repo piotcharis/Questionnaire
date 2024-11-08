@@ -379,6 +379,7 @@ const QuestionsTable = ({ questions, columns }) => {
                     <TableCell align="left">{row.reason}</TableCell>
                     <TableCell align="left">{row.label}</TableCell>
                     <TableCell align="left">{row.section_title}</TableCell>
+                    <TableCell align="left">{row.media}</TableCell>
                   </TableRow>
                 );
               })}

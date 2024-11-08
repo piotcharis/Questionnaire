@@ -18,7 +18,7 @@ const Video = ({ question }) => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(
-          VITE_API_LINK + `/videos/${question.url}`,
+          VITE_API_LINK + `/get_media.php?filename=${question.url}`,
           {
             responseType: "blob",
           }

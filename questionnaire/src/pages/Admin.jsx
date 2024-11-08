@@ -26,6 +26,8 @@ import QuestionsTable from "../components/QuestionsTable";
 import Navbar from "../components/Navbar";
 import PasswordSplashScreen from "../components/Password";
 
+const { VITE_API_LINK } = import.meta.env;
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -87,7 +89,7 @@ const Admin = () => {
   const onPasswordSubmit = (password) => {
     // Send the password to the server to check if it is correct
     axios
-      .post("http://localhost:3000/api/password", {
+      .post(VITE_API_LINK + "/check_password.php", {
         password: password,
       })
       .then((response) => {
@@ -104,7 +106,7 @@ const Admin = () => {
 
   const getQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/questions");
+      const response = await axios.get(VITE_API_LINK + "/get_questions.php");
 
       // Turn the options json to a string
       response.data.forEach((question) => {
@@ -240,7 +242,7 @@ const Admin = () => {
       // Send the video file separately
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/video_upload",
+          VITE_API_LINK + "/upload_video.php",
           formData,
           {
             headers: {
@@ -264,7 +266,7 @@ const Admin = () => {
       // Send the image file separately
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/image_upload",
+          VITE_API_LINK + "/upload_image.php",
           formData,
           {
             headers: {
@@ -285,7 +287,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/questions", {
+      const response = await fetch(VITE_API_LINK + "/get_questions.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

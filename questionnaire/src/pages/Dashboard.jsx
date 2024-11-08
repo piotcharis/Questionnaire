@@ -65,7 +65,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(VITE_API_LINK + "/questions");
+        const response = await axios.get(VITE_API_LINK + "/get_questions.php");
         setQuestions(response.data);
       } catch (error) {
         console.error("Error fetching the questions:", error);
@@ -77,7 +77,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAnswers = async () => {
       try {
-        const response = await axios.get(VITE_API_LINK + "/answers");
+        const response = await axios.get(VITE_API_LINK + "/get_answers.php");
         setAnswers(response.data);
         setLoading(false);
       } catch (error) {

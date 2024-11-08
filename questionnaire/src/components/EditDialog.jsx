@@ -47,7 +47,7 @@ export default function FormDialog({ open, setOpen, question, onClose }) {
     const formJson = Object.fromEntries(formData.entries());
 
     axios
-      .put(VITE_API_LINK + `/questions/${question.id}`, formJson)
+      .put(VITE_API_LINK + `/update_question.php?id=${question.id}`, formJson)
       .then((response) => {
         onClose(response.data);
         setOpen(false);

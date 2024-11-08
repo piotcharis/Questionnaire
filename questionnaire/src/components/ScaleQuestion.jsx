@@ -18,7 +18,7 @@ const ScaleQuestion = ({ question }) => {
     const fetchKeyword = async () => {
       try {
         const response = await axios.get(
-          VITE_API_LINK + `/labels/${question.id}`
+          VITE_API_LINK + `get_label.php?id=${question.id}`
         );
         setLabel(response.data);
       } catch (error) {

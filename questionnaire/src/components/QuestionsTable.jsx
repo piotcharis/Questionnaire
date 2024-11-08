@@ -190,10 +190,10 @@ const QuestionsTable = ({ questions, columns }) => {
     setSelected([]);
   };
 
-  // FEtch the questions again
+  // Fetch the questions again
   const fetchQuestions = async () => {
     try {
-      const response = await axios.get(VITE_API_LINK + "/questions");
+      const response = await axios.get(VITE_API_LINK + "/get_questions.php");
 
       // Turn the options json to a string
       response.data.forEach((question) => {
@@ -239,9 +239,12 @@ const QuestionsTable = ({ questions, columns }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.post(VITE_API_LINK + "/delete", {
-        selected,
-      });
+      const response = await axios.post(
+        VITE_API_LINK + "/delete_questions.php",
+        {
+          selected,
+        }
+      );
       setRows(rows.filter((row) => !selected.includes(row.id)));
       setSelected([]);
       setDeleteAlertSuccess(true);

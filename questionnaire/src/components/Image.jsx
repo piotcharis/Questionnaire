@@ -15,7 +15,7 @@ const Image = ({ question }) => {
   // get the image file
   useEffect(() => {
     axios
-      .get(VITE_API_LINK + `/images/${question.url}`, {
+      .get(VITE_API_LINK + `/get_media.php?filename=${question.url}`, {
         responseType: "blob",
       })
       .then((response) => {

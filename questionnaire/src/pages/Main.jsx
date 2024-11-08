@@ -32,7 +32,7 @@ function Main() {
     const fetchQuestion = async () => {
       try {
         const response = await axios.get(
-          VITE_API_LINK + `/questions/${questionId}`
+          VITE_API_LINK + `/get_question.php?id=${questionId}`
         );
         setCurrentQuestion(response.data);
         setLoading(false);
@@ -90,7 +90,7 @@ function Main() {
     }
 
     // Send the answer to the server
-    await axios.post(VITE_API_LINK + "/answers", {
+    await axios.post(VITE_API_LINK + "/get_answers.php", {
       question_id: currentQuestion.id,
       answer: answer.value,
       session_id: localStorage.getItem("session_id"),

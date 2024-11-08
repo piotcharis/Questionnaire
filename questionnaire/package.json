@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.2.1",
     "@vitejs/plugin-react": "^4.3.3",
     "axios": "^1.7.7",
+    "idb": "^8.0.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "react": "^18.3.1",

@@ -16,6 +16,27 @@ import Navbar from "../components/Navbar";
 import Video from "../components/Video";
 import Image from "../components/Image";
 
+import { openDB } from "idb";
+
+// Open or create a database
+const dbPromise = openDB("media-db", 1, {
+  upgrade(db) {
+    db.createObjectStore("media");
+  },
+});
+
+// Store a blob in IndexedDB
+async function storeBlob(key, blob) {
+  const db = await dbPromise;
+  await db.put("media", blob, key);
+}
+
+// Retrieve a blob from IndexedDB
+async function getBlob(key) {
+  const db = await dbPromise;
+  return await db.get("media", key);
+}
+
 function Main() {
   const { questionId } = useParams(); // Get the question id from the URL
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -42,6 +63,32 @@ function Main() {
     };
     fetchQuestion();
   }, [questionId, VITE_API_LINK]); // Fetch new question every time the questionId changes
+
+  const next_question = async (question) => {
+    try {
+      const response = await axios.get(
+        VITE_API_LINK + `/get_question.php?id=${question.next_question_yes}`
+      );
+
+      if (response.data.media === "video" || response.data.media === "image") {
+        const mediaResponse = await axios.get(
+          VITE_API_LINK + `/get_media.php?filename=${response.data.url}`,
+          { responseType: "blob" }
+        );
+
+        const mediaBlob = mediaResponse.data;
+        await storeBlob(`media`, mediaBlob);
+      }
+    } catch (error) {
+      console.error("Error preloading media:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentQuestion !== null) {
+      next_question(currentQuestion);
+    }
+  }, [currentQuestion, VITE_API_LINK]);
 
   // If the back button of the browser is clicked, pop the last question from the question_order array
   window.onpopstate = function () {

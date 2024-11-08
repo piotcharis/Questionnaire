@@ -10,11 +10,39 @@ import axios from "axios";
 
 const { VITE_API_LINK } = import.meta.env;
 
+import { openDB } from "idb";
+
+// Open or create a database
+const dbPromise = openDB("media-db", 1, {
+  upgrade(db) {
+    db.createObjectStore("media");
+  },
+});
+
+// Retrieve a blob from IndexedDB
+async function getBlob(key) {
+  const db = await dbPromise;
+  return await db.get("media", key);
+}
+
 const Video = ({ question }) => {
   const [videoFile, setVideoFile] = useState(null);
 
+  async function loadMedia() {
+    const mediaBlob = await getBlob(`media`);
+    if (mediaBlob) {
+      const mediaUrl = URL.createObjectURL(mediaBlob);
+      setVideoFile(mediaUrl);
+    }
+  }
+
   // get the video file
   useEffect(() => {
+    // Check if the video is already loaded in indexedDB
+    if (getBlob(`media`)) {
+      loadMedia();
+    }
+
     const fetchVideo = async () => {
       try {
         const response = await axios.get(

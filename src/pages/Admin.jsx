@@ -684,7 +684,6 @@ const Admin = () => {
               variant="contained"
               color="primary"
               onClick={handleOpenDialog}
-              style={{ marginLeft: 50 }}
             >
               Show Questions
             </Button>

@@ -76,8 +76,7 @@
 }
 
 .select-form {
-  width: 80vw;
-  align-items: center;
+  width: fit-content;
 }
 
 .other-text {

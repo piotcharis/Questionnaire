@@ -1,3 +1,9 @@
+<!-- Add qr code -->
+
+# Scan the QR code to view the app
+
+![QR Code](qr.svg)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

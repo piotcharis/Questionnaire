@@ -317,7 +317,8 @@ const Dashboard = () => {
       </Typography>
       <Paper style={{ padding: 20 }}>
         <Typography variant="h6" gutterBottom>
-          Number of responses: {n_responses}
+          Number of responses:{" "}
+          <span style={{ color: "#1976d2" }}> {n_responses} </span>
         </Typography>
       </Paper>
       <Paper style={{ padding: 20 }}>

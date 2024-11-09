@@ -70,7 +70,7 @@ const MultipleSelect = ({ question }) => {
         >
           {question.question_text}
         </label>
-        <FormControl style={{ width: "40vw" }}>
+        <FormControl className="select-form">
           {renderOptions()}
           {question.other && (
             <FormControlLabel
@@ -89,7 +89,7 @@ const MultipleSelect = ({ question }) => {
               id="other"
               variant="outlined"
               label="Please specify"
-              style={{ marginTop: "8vh" }}
+              className="other-text"
               value={otherText}
               onChange={handleOtherTextChange}
             />

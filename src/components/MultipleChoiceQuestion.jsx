@@ -60,7 +60,7 @@ const MultipleChoiceQuestion = ({ question }) => {
         >
           {question.question_text}
         </label>
-        <FormControl style={{ width: "40vw" }}>
+        <FormControl className="select-form">
           <RadioGroup
             aria-labelledby="answer"
             name="radio-buttons-group"
@@ -74,7 +74,7 @@ const MultipleChoiceQuestion = ({ question }) => {
               id="other"
               variant="outlined"
               label="Please specify"
-              style={{ marginTop: "8vh" }}
+              className="other-text"
               onChange={handleOther}
             />
           ) : null}
@@ -85,7 +85,7 @@ const MultipleChoiceQuestion = ({ question }) => {
               id="reason"
               variant="outlined"
               label="Please specify"
-              style={{ marginTop: "8vh" }}
+              className="other-text"
               onChange={handleOther}
             />
           ) : null}

@@ -19,7 +19,7 @@ const TextQuestion = ({ question }) => {
           label="Your answer"
           multiline
           maxRows={6}
-          style={{ width: "40vw", marginTop: "8vh" }}
+          className="text-field"
         />
       </Stack>
     </Container>

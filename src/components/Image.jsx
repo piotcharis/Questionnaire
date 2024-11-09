@@ -61,7 +61,7 @@ const Image = ({ question }) => {
   }
 
   return (
-    <Container className="outer-container">
+    <Container>
       <Card sx={{ width: "auto" }}>
         <CardMedia
           sx={{ maxHeight: 600 }}
@@ -69,11 +69,6 @@ const Image = ({ question }) => {
           src={imageFile}
           title={question.media_title}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h7" component="div">
-            {question.media_title}
-          </Typography>
-        </CardContent>
       </Card>
     </Container>
   );

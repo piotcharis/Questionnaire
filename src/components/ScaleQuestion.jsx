@@ -51,6 +51,7 @@ const ScaleQuestion = ({ question }) => {
         </label>
         <Rating
           name="hover-feedback"
+          size="large"
           value={value}
           precision={1}
           getLabelText={getLabelText}

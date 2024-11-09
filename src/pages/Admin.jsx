@@ -683,21 +683,21 @@ const Admin = () => {
             <Button
               variant="contained"
               color="primary"
+              onClick={handleOpenDialog}
+              style={{ marginLeft: 50 }}
+            >
+              Show Questions
+            </Button>
+
+            <Button
+              variant="contained"
+              color="primary"
               onClick={handleAddQuestion}
               style={{ backgroundColor: "#4CAF50" }}
             >
               Add Question
             </Button>
 
-            {/* Button to show all questions */}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenDialog}
-              style={{ marginLeft: 50 }}
-            >
-              Show Questions
-            </Button>
             <Dialog
               fullScreen
               open={openDialog}

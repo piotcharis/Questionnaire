@@ -79,6 +79,10 @@ const Dashboard = () => {
       }
     };
     fetchQuestions();
+
+    const questionInterval = setInterval(fetchQuestions, 60000);
+
+    return () => clearInterval(questionInterval);
   }, []);
 
   useEffect(() => {
@@ -99,6 +103,10 @@ const Dashboard = () => {
       }
     };
     fetchAnswers();
+
+    const answerInterval = setInterval(fetchAnswers, 60000);
+
+    return () => clearInterval(answerInterval);
   }, []);
 
   useEffect(() => {

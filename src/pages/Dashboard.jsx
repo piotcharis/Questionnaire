@@ -4,7 +4,7 @@ import {
   Paper,
   Typography,
   Box,
-  colors,
+  useMediaQuery,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -22,26 +22,6 @@ import Navbar from "../components/Navbar";
 import ExportButton from "../components/ExportButton";
 
 const { VITE_API_LINK } = import.meta.env;
-
-const chartSetting = {
-  yAxis: [
-    {
-      label: "number of answers",
-      tickMinStep: 1,
-    },
-  ],
-  width: 550,
-  height: 350,
-  sx: {
-    [`.${axisClasses.left}`]: {
-      paddingLeft: "50px",
-    },
-    [`.${axisClasses.left} .${axisClasses.label}`]: {
-      transform: "translate(-10px, 0)",
-    },
-  },
-  colors: ["#003f5c", "#58508d", "#bc5090", "#ff6361", "#ffa600"],
-};
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -67,6 +47,29 @@ const Dashboard = () => {
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [n_responses, setN_responses] = useState(0);
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  const chartSetting = {
+    yAxis: [
+      {
+        label: "number of answers",
+        tickMinStep: 1,
+      },
+    ],
+    width: 550,
+    height: 350,
+    sx: {
+      [`.${axisClasses.left}`]: {
+        paddingLeft: "50px",
+      },
+      [`.${axisClasses.left} .${axisClasses.label}`]: {
+        transform: "translate(-10px, 0)",
+      },
+      "&&": { touchAction: isSmallScreen ? "auto" : "none" },
+    },
+    colors: ["#003f5c", "#58508d", "#bc5090", "#ff6361", "#ffa600"],
+  };
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -216,6 +219,11 @@ const Dashboard = () => {
               },
             },
           }}
+          tooltip={{ trigger: !isSmallScreen ? "axis" : "none" }}
+          axisHighlight={{
+            x: isSmallScreen ? "none" : "band",
+            y: "none",
+          }}
           {...chartSetting}
         />
       );
@@ -247,6 +255,11 @@ const Dashboard = () => {
                 fontSize: 12,
               },
             },
+          }}
+          tooltip={{ trigger: !isSmallScreen ? "axis" : "none" }}
+          axisHighlight={{
+            x: isSmallScreen ? "none" : "band",
+            y: "none",
           }}
           {...chartSetting}
         />

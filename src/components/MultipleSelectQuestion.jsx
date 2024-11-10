@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 
-const MultipleSelect = ({ question }) => {
+const MultipleSelectQuestion = ({ question }) => {
   const [options, setOptions] = React.useState([]);
   const [selectedValues, setSelectedValues] = React.useState([]);
   const [otherText, setOtherText] = React.useState("");
@@ -101,4 +101,4 @@ const MultipleSelect = ({ question }) => {
   );
 };
 
-export default MultipleSelect;
+export default MultipleSelectQuestion;

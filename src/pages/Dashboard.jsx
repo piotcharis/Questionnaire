@@ -13,6 +13,7 @@ import { TableVirtuoso } from "react-virtuoso";
 import axios from "axios";
 
 import Navbar from "../components/Navbar";
+import ExportButton from "../components/ExportButton";
 
 const { VITE_API_LINK } = import.meta.env;
 
@@ -320,6 +321,9 @@ const Dashboard = () => {
           Number of responses:{" "}
           <span style={{ color: "#1976d2" }}> {n_responses} </span>
         </Typography>
+      </Paper>
+      <Paper style={{ padding: 20 }}>
+        <ExportButton answers={answers} />
       </Paper>
       <Paper style={{ padding: 20 }}>
         <Typography variant="h6" gutterBottom>

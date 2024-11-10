@@ -9,7 +9,7 @@ import Alert from "@mui/material/Alert";
 
 import TextQuestion from "../components/TextQuestion";
 import MultipleChoiceQuestion from "../components/MultipleChoiceQuestion";
-import MultipleSelect from "../components/MultipleSelect";
+import MultipleSelectQuestion from "../components/MultipleSelectQuestion";
 import ScaleQuestion from "../components/ScaleQuestion";
 import Thanks from "../components/Thanks";
 import Navbar from "../components/Navbar";
@@ -121,7 +121,7 @@ function Main() {
     } else if (currentQuestion.question_type === "multiple_choice") {
       return <MultipleChoiceQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "multiple_select") {
-      return <MultipleSelect question={currentQuestion} />;
+      return <MultipleSelectQuestion question={currentQuestion} />;
     } else if (currentQuestion.question_type === "scale") {
       return <ScaleQuestion question={currentQuestion} />;
     }

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { CircularProgress, Paper, Typography, Box } from "@mui/material";
+import {
+  CircularProgress,
+  Paper,
+  Typography,
+  Box,
+  colors,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
@@ -34,6 +40,7 @@ const chartSetting = {
       transform: "translate(-10px, 0)",
     },
   },
+  colors: ["#003f5c", "#58508d", "#bc5090", "#ff6361", "#ffa600"],
 };
 
 const VirtuosoTableComponents = {
@@ -195,20 +202,22 @@ const Dashboard = () => {
       const options = getOptions(question);
 
       return (
-        <Grid
-          size={4}
-          item
-          key={question.id}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <BarChart
-            dataset={dataset}
-            xAxis={[{ scaleType: "band", dataKey: "name" }]}
-            series={options}
-            slotProps={{ legend: { hidden: true } }}
-            {...chartSetting}
-          />
-        </Grid>
+        <BarChart
+          margin={{ top: 10, bottom: 150, left: 100, right: 100 }}
+          dataset={dataset}
+          xAxis={[{ scaleType: "band", dataKey: "name" }]}
+          series={options}
+          slotProps={{
+            legend: {
+              hidden: false,
+              position: { vertical: "bottom", horizontal: "middle" },
+              labelStyle: {
+                fontSize: 12,
+              },
+            },
+          }}
+          {...chartSetting}
+        />
       );
     });
   };
@@ -225,20 +234,22 @@ const Dashboard = () => {
       ];
 
       return (
-        <Grid
-          size={4}
-          item
-          key={question.id}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <BarChart
-            dataset={dataset}
-            xAxis={[{ scaleType: "band", dataKey: "name" }]}
-            series={labels}
-            slotProps={{ legend: { hidden: true } }}
-            {...chartSetting}
-          />
-        </Grid>
+        <BarChart
+          margin={{ top: 10, bottom: 150, left: 100, right: 100 }}
+          dataset={dataset}
+          xAxis={[{ scaleType: "band", dataKey: "name" }]}
+          series={labels}
+          slotProps={{
+            legend: {
+              hidden: false,
+              position: { vertical: "bottom", horizontal: "middle" },
+              labelStyle: {
+                fontSize: 12,
+              },
+            },
+          }}
+          {...chartSetting}
+        />
       );
     });
   };
@@ -334,7 +345,7 @@ const Dashboard = () => {
         <ExportButton answers={answers} />
       </Paper>
       <Paper style={{ padding: 20 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom style={{ paddingBottom: 30 }}>
           Multiple Choice Questions
         </Typography>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -342,7 +353,7 @@ const Dashboard = () => {
         </Grid>
       </Paper>
       <Paper style={{ padding: 20 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom style={{ paddingBottom: 30 }}>
           Scale Questions
         </Typography>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>

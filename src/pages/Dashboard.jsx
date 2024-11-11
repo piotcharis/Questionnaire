@@ -48,7 +48,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [n_responses, setN_responses] = useState(0);
 
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const isSmallScreen = useMediaQuery("(max-width:1200px)");
 
   const chartSetting = {
     yAxis: [

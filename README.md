@@ -6,6 +6,21 @@ This is a survey app that allows users to answer questions and for admins to vie
 
 <img src="qr.svg" alt="qr-code" width=200 />
 
+# Table of Contents
+
+- [Pages](#pages)
+  - [piotopoulos.com](#piotopouloscom)
+  - [piotoptoulos.com/admin](#piotoptouloscomadmin)
+  - [piotopoulos.com/dashboard](#piotopouloscomdashboard)
+- [Database](#database)
+  - [questions](#questions)
+  - [responses](#responses)
+- [API](#api)
+- [File Structure](#file-structure)
+- [Running the project](#running-the-project)
+
+# Pages
+
 ## [piotopoulos.com](https://piotopoulos.com)
 
 The main page of the app is the survey page where users can answer questions one by one. The questions can be of different types such as text, multiple choice, multiple select and scale and they can include images or videos.

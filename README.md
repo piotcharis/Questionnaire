@@ -26,33 +26,33 @@ The app uses a MySQL database to store the questions and responses. The database
 
 The questions table has the following columns:
 
-| Column                | Description                                                                                    |
-| --------------------- | ---------------------------------------------------------------------------------------------- |
-| **id**                | The ID of the question                                                                         |
-| **question_text**     | The text of the question                                                                       |
-| **question_type**     | The type of the question (text, multiple choice, multiple select)                              |
-| **options**           | The options of the question (for multiple choice and multiple select questions) in JSON format |
-| **next_question_yes** | The ID of the next question if the answer is yes                                               |
-| **next_question_no**  | The ID of the next question if the answer is no                                                |
-| **url**               | The URL of the media (image or video) associated with the question                             |
-| **media_title**       | The title of the media                                                                         |
-| **other**             | Whether the question has an "Other please specify" option                                      |
-| **reason**            | Whether the question has a "If No please specify" field                                        |
-| **label**             | The keyword for scale questions (e.g., "useful", "easy", "satisfying")                         |
-| **section_title**     | The title of the section the question belongs to                                               |
-| **media**             | The type of media (image or video)                                                             |
+| Column                | Description                                                                                    | Type                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **id**                | The ID of the question                                                                         | Integer (PRIMARY KEY)                                       |
+| **question_text**     | The text of the question                                                                       | String                                                      |
+| **question_type**     | The type of the question (text, multiple choice, multiple select)                              | ENUM("text", "multiple_choice", "multiple_select", "scale") |
+| **options**           | The options of the question (for multiple choice and multiple select questions) in JSON format | JSON                                                        |
+| **next_question_yes** | The ID of the next question if the answer is yes                                               | Integer                                                     |
+| **next_question_no**  | The ID of the next question if the answer is no                                                | Integer                                                     |
+| **url**               | The URL of the media (image or video) associated with the question                             | String                                                      |
+| **media_title**       | The title of the media                                                                         | String                                                      |
+| **other**             | Whether the question has an "Other please specify" option                                      | Boolean                                                     |
+| **reason**            | Whether the question has a "If No please specify" field                                        | Boolean                                                     |
+| **label**             | The keyword for scale questions (e.g., "useful", "easy", "satisfying")                         | String                                                      |
+| **section_title**     | The title of the section the question belongs to                                               | String                                                      |
+| **media**             | The type of media (image or video)                                                             | ENUM("image", "video")                                      |
 
 ## responses
 
 The responses table has the following columns:
 
-| Column          | Description                                    |
-| --------------- | ---------------------------------------------- |
-| **id**          | The ID of the response                         |
-| **question_id** | The ID of the corresponding question           |
-| **answer**      | The answer to the question                     |
-| **timestamp**   | The timestamp of the response                  |
-| **session_id**  | A randomly generated unique ID for the session |
+| Column          | Description                                    | Type                  |
+| --------------- | ---------------------------------------------- | --------------------- |
+| **id**          | The ID of the response                         | Integer (PRIMARY KEY) |
+| **question_id** | The ID of the corresponding question           | Integer (FOREIGN KEY) |
+| **answer**      | The answer to the question                     | String                |
+| **timestamp**   | The timestamp of the response                  | DateTime              |
+| **session_id**  | A randomly generated unique ID for the session | String                |
 
 # API
 

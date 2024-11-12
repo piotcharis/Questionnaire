@@ -127,6 +127,7 @@ POST upload_video.php       # Check if file is the correct type and upload it to
 # Running the project
 
 To run the project, you need to have Node.js installed. You can download it from [here](https://nodejs.org/).
+You also need to have Yarn installed. You can download it from [here](https://yarnpkg.com/).
 
 1. Clone the repository
 

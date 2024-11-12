@@ -4,9 +4,7 @@ This is a survey app that allows users to answer questions and for admins to vie
 
 ## Scan the QR code to view the live website
 
-<div style="display: flex; justify-content: center;">
-    <img src="qr.svg" alt="qr-code" width=200 />
-</div>
+<img src="qr.svg" alt="qr-code" width=200 />
 
 # Table of Contents
 

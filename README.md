@@ -1,76 +1,134 @@
-<!-- Add qr code -->
+# Survey App
 
-# Scan the QR code to view the app
+This is a survey app that allows users to answer questions and for admins to view the responses and view, edit, and delete the questions. The app is built using React and Vite.
 
-![QR Code](qr.svg)
+## Scan the QR code to view the live website
 
-# Getting Started with Create React App
+<img src="qr.svg" alt="qr-code" width=200 />
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## piotopoulos.com
 
-## Available Scripts
+The main page of the app is the survey page where users can answer questions one by one. The questions can be of different types such as text, multiple choice, multiple select and scale and they can include images or videos.
 
-In the project directory, you can run:
+## piotoptoulos.com/admin
 
-### `yarn start`
+The admin page is where admins can view, edit, and delete the questions. The questions can be viewed on a table and the admin can click on a question to view the details and edit them or delete the question. The admin can also add new questions by completing the form. This page is protected by a password to prevent unauthorized access.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## piotopoulos.com/dashboard
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The dashboard page is where users can view the responses to the questions. The responses are displayed in bar charts (for multiple choice, scale and multiple select questions) and in a list (for text questions). The user can also export the responses to a CSV file and see the total number of responses.
 
-### `yarn test`
+# Database
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The app uses a MySQL database to store the questions and responses. The database has two tables:
 
-### `yarn build`
+## questions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The questions table has the following columns:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Column                | Description                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| **id**                | The ID of the question                                                                         |
+| **question_text**     | The text of the question                                                                       |
+| **question_type**     | The type of the question (text, multiple choice, multiple select)                              |
+| **options**           | The options of the question (for multiple choice and multiple select questions) in JSON format |
+| **next_question_yes** | The ID of the next question if the answer is yes                                               |
+| **next_question_no**  | The ID of the next question if the answer is no                                                |
+| **url**               | The URL of the media (image or video) associated with the question                             |
+| **media_title**       | The title of the media                                                                         |
+| **other**             | Whether the question has an "Other please specify" option                                      |
+| **reason**            | Whether the question has a "If No please specify" field                                        |
+| **label**             | The keyword for scale questions (e.g., "useful", "easy", "satisfying")                         |
+| **section_title**     | The title of the section the question belongs to                                               |
+| **media**             | The type of media (image or video)                                                             |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## responses
 
-### `yarn eject`
+The responses table has the following columns:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Column          | Description                                    |
+| --------------- | ---------------------------------------------- |
+| **id**          | The ID of the response                         |
+| **question_id** | The ID of the corresponding question           |
+| **answer**      | The answer to the question                     |
+| **timestamp**   | The timestamp of the response                  |
+| **session_id**  | A randomly generated unique ID for the session |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# API
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The app uses php endpoints to fetch and send data to the database. The endpoints are:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+POST add_answer.php         # Add an answer to the responses table
+POST add_question.php       # Add a question to the questions table
+POST check_password.php     # Check if the password is correct
+POST delete_questions.php   # Delete a question from the questions table
+GET  get_answers.php        # Get all answers from the responses table
+GET  get_label.php          # Get the label of a question
+GET  get_media.php          # Get the requested media from the media folder
+GET  get_questions.php      # Get all questions from the questions table
+GET  next_question.php      # Get the next question
+GET  previous_question.php  # Get the previous question
+PUT  update_question.php    # Update a question in the questions table
+POST upload_image.php       # Check if file is the correct type and upload it to the media folder
+POST upload_video.php       # Check if file is the correct type and upload it to the media folder
+```
 
-## Learn More
+# File Structure
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+.
+├── index.html
+├── styles.css
+├── vite.config.js
+├── package.json
+├── yarn.lock
+├── public
+│   ├── favicon.svg
+├── src
+│   ├── components
+│   │   ├── EditDialog.jsx
+│   │   ├── ExportButton.jsx
+│   │   ├── Image.jsx
+│   │   ├── MultipleChoiceQuestion.jsx
+│   │   ├── MultipleSelectQuestion.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── Password.jsx
+│   │   ├── QuestionTable.jsx
+│   │   ├── TextQuestion.jsx
+│   │   ├── Thanks.jsx
+│   │   ├── Video.jsx
+│   ├── pages
+│   │   ├── Admin.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── Main.jsx
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   ├── index.jsx
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
 
-### Code Splitting
+# Running the project
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+To run the project, you need to have Node.js installed. You can download it from [here](https://nodejs.org/).
 
-### Analyzing the Bundle Size
+1. Clone the repository
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+git clone
+```
 
-### Making a Progressive Web App
+2. Install the dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+yarn install
+```
 
-### Advanced Configuration
+3. Run the project
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+yarn start
+```
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The project will be running on [http://localhost:3000](http://localhost:3000).

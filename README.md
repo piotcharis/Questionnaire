@@ -89,6 +89,20 @@ POST upload_image.php       # Check if file is the correct type and upload it to
 POST upload_video.php       # Check if file is the correct type and upload it to the media folder
 ```
 
+## Environment Variables
+
+```bash
+DB_HOST = '193.203.168.101'
+DB_USER = 'u698006961_admin'
+DB_PASSWORD = '************'
+DB_NAME = 'u698006961_questionnaire'
+DB_PORT = 3306
+
+MEDIA_SAVE_PATH = './media'
+
+ADMIN_PASSWORD = 'admin'
+```
+
 # File Structure
 
 ```bash

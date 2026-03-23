@@ -2,10 +2,6 @@
 
 This is a survey app that allows users to answer questions and for admins to view the responses and view, edit, and delete the questions. The app is built using React and Vite.
 
-## Scan the QR code to view the live website
-
-<img src="qr.svg" alt="qr-code" width=200 />
-
 # Table of Contents
 
 - [Pages](#pages)

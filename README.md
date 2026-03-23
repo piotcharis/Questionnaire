@@ -5,9 +5,9 @@ This is a survey app that allows users to answer questions and for admins to vie
 # Table of Contents
 
 - [Pages](#pages)
-  - [piotopoulos.com](#piotopouloscom)
-  - [piotoptoulos.com/admin](#piotoptouloscomadmin)
-  - [piotopoulos.com/dashboard](#piotopouloscomdashboard)
+  - [Main](#piotopouloscom)
+  - [Admin](#piotoptouloscomadmin)
+  - [Dashboard](#piotopouloscomdashboard)
 - [Database](#database)
   - [questions](#questions)
   - [responses](#responses)
@@ -17,15 +17,15 @@ This is a survey app that allows users to answer questions and for admins to vie
 
 # Pages
 
-## [piotopoulos.com](https://piotopoulos.com)
+## Main
 
 The main page of the app is the survey page where users can answer questions one by one. The questions can be of different types such as text, multiple choice, multiple select and scale and they can include images or videos.
 
-## [piotoptoulos.com/admin](https://piotopoulos.com/admin)
+## Admin
 
 The admin page is where admins can view, edit, and delete the questions. The questions can be viewed on a table and the admin can click on a question to view the details and edit them or delete the question. The admin can also add new questions by completing the form. This page is protected by a password to prevent unauthorized access.
 
-## [piotopoulos.com/dashboard](https://piotopoulos.com/dashboard)
+## Dashboard
 
 The dashboard page is where users can view the responses to the questions. The responses are displayed in bar charts (for multiple choice, scale and multiple select questions) and in a list (for text questions). The user can also export the responses to a CSV file and see the total number of responses.
 
